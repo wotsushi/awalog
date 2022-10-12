@@ -1,0 +1,106 @@
+.toolbar {
+  width: 65%;
+  display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.modal-log {
+  display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.modal-player-name {
+  color: gray;
+}
+
+.modal-log-lp {
+  min-width: 160px;
+}
+
+
+.sides {
+  display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.side {
+  width: 450px;
+  display: flex;
+	flex-direction: column;
+}
+
+.lp-box-left {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.lp-box-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.lp-parent {
+  padding: 10px;
+  width: 250px;
+  margin-top: 10px;
+}
+
+.right-window {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+@mixin lp-result {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 130px;
+}
+
+.lp-result-left {
+  @include lp-result;
+  margin-left: 10px;
+}
+
+.lp-result-right {
+  @include lp-result;
+  margin-right: 10px;
+}
+
+.lp-result-icon {
+  vertical-align: bottom;
+}
+
+.deck-selector {
+  margin-bottom: 5px;
+}
+
+.firstSwitch {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 24px;
+}
+
+.lp {
+  font-size: 30px;
+  text-align: right;
+}
+
+.button {
+  width: 100px;
+  height: 60px;
+}
+
+.button-row {
+  padding: 15px;
+}
+
+.lo-button {
+  width: 110px;
+  height: 60px;
+}
