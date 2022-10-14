@@ -155,12 +155,12 @@ describe("LP/Body", () => {
         render(<Body />);
         await user.click(screen.getByTestId("window-first-switch-1p"));
 
-        expect(screen.getAllByText("-50")).toHaveLength(2);
+        expect(screen.getAllByText("-100")).toHaveLength(2);
         expect(screen.queryByText("7")).not.toBeInTheDocument();
 
         await user.click(screen.getAllByText("+")[0]);
 
-        expect(screen.getByText("-50")).toBeInTheDocument();
+        expect(screen.getByText("-100")).toBeInTheDocument();
         expect(screen.getByText("7")).toBeInTheDocument();
       });
       it("LPが8000の状態で+1234を入力するとLP欄に8000+1234が表示される", async () => {
@@ -202,13 +202,13 @@ describe("LP/Body", () => {
         await user.click(screen.getByTestId("window-first-switch-1p"));
         await user.click(screen.getAllByText("+")[0]);
 
-        expect(screen.getByText("-50")).toBeInTheDocument();
+        expect(screen.getByText("-100")).toBeInTheDocument();
         expect(screen.getByText("7")).toBeInTheDocument();
 
         await user.click(screen.getByText("1"));
         await user.click(screen.getByText("="));
 
-        expect(screen.getAllByText("-50")).toHaveLength(2);
+        expect(screen.getAllByText("-100")).toHaveLength(2);
         expect(screen.queryByText("7")).not.toBeInTheDocument();
       });
       it("お互いのLPが8000の状態で2PのLPを+9000すると1PのLPは8000のままだが2PのLPは17000になる", async () => {
@@ -249,12 +249,12 @@ describe("LP/Body", () => {
         render(<Body />);
         await user.click(screen.getByTestId("window-first-switch-1p"));
 
-        expect(screen.getAllByText("-50")).toHaveLength(2);
+        expect(screen.getAllByText("-100")).toHaveLength(2);
         expect(screen.queryByText("7")).not.toBeInTheDocument();
 
         await user.click(screen.getAllByText("+")[0]);
 
-        expect(screen.getByText("-50")).toBeInTheDocument();
+        expect(screen.getByText("-100")).toBeInTheDocument();
         expect(screen.getByText("7")).toBeInTheDocument();
       });
       it("LPが8000の状態で-1234を入力するとLP欄に8000-1234が表示される", async () => {
@@ -296,13 +296,13 @@ describe("LP/Body", () => {
         await user.click(screen.getByTestId("window-first-switch-1p"));
         await user.click(screen.getAllByText("-")[0]);
 
-        expect(screen.getByText("-50")).toBeInTheDocument();
+        expect(screen.getByText("-100")).toBeInTheDocument();
         expect(screen.getByText("7")).toBeInTheDocument();
 
         await user.click(screen.getByText("1"));
         await user.click(screen.getByText("="));
 
-        expect(screen.getAllByText("-50")).toHaveLength(2);
+        expect(screen.getAllByText("-100")).toHaveLength(2);
         expect(screen.queryByText("7")).not.toBeInTheDocument();
       });
       it("お互いのLPが8000の状態で2PのLPを-1すると1PのLPは8000のままだが2PのLPは7999になる", async () => {
@@ -348,12 +348,12 @@ describe("LP/Body", () => {
         await user.click(screen.getAllByText("+")[0]);
 
         expect(screen.getByText("7")).toBeInTheDocument();
-        expect(screen.getByText("-50")).toBeInTheDocument();
+        expect(screen.getByText("-100")).toBeInTheDocument();
 
         await user.click(screen.getByText("C"));
 
         expect(screen.queryByText("7")).not.toBeInTheDocument();
-        expect(screen.getAllByText("-50")).toHaveLength(2);
+        expect(screen.getAllByText("-100")).toHaveLength(2);
       });
       it("減算モードでLP入力中にキャンセルするとnormalモードになり入力していたLPもクリアされる", async () => {
         render(<Body />);
@@ -363,13 +363,13 @@ describe("LP/Body", () => {
 
         expect(screen.getByTestId("window-lp-2p")).toHaveTextContent("8000-1");
         expect(screen.getByText("7")).toBeInTheDocument();
-        expect(screen.getAllByText("-50")).toHaveLength(1);
+        expect(screen.getAllByText("-100")).toHaveLength(1);
 
         await user.click(screen.getByText("C"));
 
         expect(screen.getByTestId("window-lp-2p")).toHaveTextContent("8000");
         expect(screen.queryByText("7")).not.toBeInTheDocument();
-        expect(screen.getAllByText("-50")).toHaveLength(2);
+        expect(screen.getAllByText("-100")).toHaveLength(2);
       });
       it("1Pが加算モード、2Pが減算モードの状態で2P側をキャンセルすると1Pは加算モードのままだが2Pはnormalモードになる", async () => {
         render(<Body />);
@@ -381,7 +381,7 @@ describe("LP/Body", () => {
 
         expect(screen.getByTestId("window-lp-1p")).toHaveTextContent("8000+1");
         expect(screen.getByTestId("window-lp-2p")).toHaveTextContent("8000-2");
-        expect(screen.queryByText("-50")).not.toBeInTheDocument();
+        expect(screen.queryByText("-100")).not.toBeInTheDocument();
         expect(screen.getAllByText("7")).toHaveLength(2);
 
         await user.click(screen.getAllByText("C")[1]);
@@ -389,7 +389,7 @@ describe("LP/Body", () => {
         expect(screen.getByTestId("window-lp-1p")).toHaveTextContent("8000+1");
         expect(screen.getByTestId("window-lp-2p")).toHaveTextContent("8000");
         expect(screen.getByText("7")).toBeInTheDocument();
-        expect(screen.getByText("-50")).toBeInTheDocument();
+        expect(screen.getByText("-100")).toBeInTheDocument();
       });
       it("加算モードでLP入力中にキャンセルし加算モードに戻ると入力したLPはクリアされる", async () => {
         render(<Body />);
@@ -592,13 +592,13 @@ describe("LP/Body", () => {
         />
       );
       await user.click(screen.getByTestId("window-first-switch-1p"));
-      await user.click(screen.getAllByText("-50")[0]);
       await user.click(screen.getAllByText("-100")[0]);
       await user.click(screen.getAllByText("-200")[0]);
       await user.click(screen.getAllByText("-300")[0]);
       await user.click(screen.getAllByText("-400")[0]);
       await user.click(screen.getAllByText("-500")[0]);
       await user.click(screen.getAllByText("-600")[0]);
+      await user.click(screen.getAllByText("-700")[0]);
       await user.click(screen.getAllByText("-800")[0]);
       await user.click(screen.getAllByText("-900")[0]);
       await user.click(screen.getAllByText("-1000")[0]);
@@ -609,7 +609,7 @@ describe("LP/Body", () => {
         "旋風BF (1P)"
       );
       expect(screen.getAllByTestId("modal-log")[9]).toHaveTextContent(
-        "8000 → 7950 (-50)"
+        "8000 → 7900 (-100)"
       );
 
       await user.click(screen.getByLabelText("Close"));
@@ -621,7 +621,7 @@ describe("LP/Body", () => {
         "旋風BF (1P)"
       );
       expect(screen.getAllByTestId("modal-log")[9]).toHaveTextContent(
-        "7950 → 7850 (-100)"
+        "7900 → 7700 (-200)"
       );
     });
     it("1PのLPを減算した後に1Pのデッキを変更すると変更後のデッキで減算ログが表示される", async () => {
@@ -979,13 +979,13 @@ describe("LP/Body", () => {
     it("LPを11回減算した後に戻るを押すと直近10件の減算ログのみ表示され最新の一つ前の減算ログが色塗りされる", async () => {
       render(<Body />);
       await user.click(screen.getByTestId("window-first-switch-1p"));
-      await user.click(screen.getAllByText("-50")[0]);
       await user.click(screen.getAllByText("-100")[0]);
       await user.click(screen.getAllByText("-200")[0]);
       await user.click(screen.getAllByText("-300")[0]);
       await user.click(screen.getAllByText("-400")[0]);
       await user.click(screen.getAllByText("-500")[0]);
       await user.click(screen.getAllByText("-600")[0]);
+      await user.click(screen.getAllByText("-700")[0]);
       await user.click(screen.getAllByText("-800")[0]);
       await user.click(screen.getAllByText("-900")[0]);
       await user.click(screen.getAllByText("-1000")[0]);
@@ -997,7 +997,7 @@ describe("LP/Body", () => {
         "旋風BF (1P)"
       );
       expect(screen.getAllByTestId("modal-log")[9]).toHaveTextContent(
-        "7950 → 7850 (-100)"
+        "7900 → 7700 (-200)"
       );
       expect(screen.getAllByTestId("modal-log")[0]).toHaveClass(
         "list-group-item-dark"
@@ -1015,7 +1015,7 @@ describe("LP/Body", () => {
         "旋風BF (1P)"
       );
       expect(screen.getAllByTestId("modal-log")[9]).toHaveTextContent(
-        "7950 → 7850 (-100)"
+        "7900 → 7700 (-200)"
       );
       expect(screen.getAllByTestId("modal-log")[0]).not.toHaveClass(
         "list-group-item-dark"
@@ -1024,16 +1024,16 @@ describe("LP/Body", () => {
         "list-group-item-dark"
       );
     });
-    it("LPを11回減算した後に戻るを9回押すとさ最新のLP減算ログを除いた10件が表示される", async () => {
+    it("LPを11回減算した後に戻るを9回押すと最新のLP減算ログを除いた10件が表示される", async () => {
       render(<Body />);
       await user.click(screen.getByTestId("window-first-switch-1p"));
-      await user.click(screen.getAllByText("-50")[0]);
       await user.click(screen.getAllByText("-100")[0]);
       await user.click(screen.getAllByText("-200")[0]);
       await user.click(screen.getAllByText("-300")[0]);
       await user.click(screen.getAllByText("-400")[0]);
       await user.click(screen.getAllByText("-500")[0]);
       await user.click(screen.getAllByText("-600")[0]);
+      await user.click(screen.getAllByText("-700")[0]);
       await user.click(screen.getAllByText("-800")[0]);
       await user.click(screen.getAllByText("-900")[0]);
       await user.click(screen.getAllByText("-1000")[0]);
@@ -1045,13 +1045,13 @@ describe("LP/Body", () => {
         "旋風BF (1P)"
       );
       expect(screen.getAllByTestId("modal-log")[0]).toHaveTextContent(
-        "3150 → 1150 (-2000)"
+        "2500 → 500 (-2000)"
       );
       expect(screen.getAllByTestId("modal-log")[9]).toHaveTextContent(
         "旋風BF (1P)"
       );
       expect(screen.getAllByTestId("modal-log")[9]).toHaveTextContent(
-        "7950 → 7850 (-100)"
+        "7900 → 7700 (-200)"
       );
       expect(screen.getAllByTestId("modal-log")[0]).toHaveClass(
         "list-group-item-dark"
@@ -1068,13 +1068,13 @@ describe("LP/Body", () => {
         "旋風BF (1P)"
       );
       expect(screen.getAllByTestId("modal-log")[0]).toHaveTextContent(
-        "4150 → 3150 (-1000)"
+        "3500 → 2500 (-1000)"
       );
       expect(screen.getAllByTestId("modal-log")[9]).toHaveTextContent(
         "旋風BF (1P)"
       );
       expect(screen.getAllByTestId("modal-log")[9]).toHaveTextContent(
-        "8000 → 7950 (-50)"
+        "8000 → 7900 (-100)"
       );
       expect(screen.getAllByTestId("modal-log")[8]).toHaveClass(
         "list-group-item-dark"
@@ -1083,17 +1083,17 @@ describe("LP/Body", () => {
     it("LPを15回減算した後に5回戻るを押すと最新から数えて2回目〜11回目のLP減算ログが表示される", async () => {
       render(<Body />);
       await user.click(screen.getByTestId("window-first-switch-1p"));
-      await user.click(screen.getAllByText("-50")[0]);
-      await user.click(screen.getAllByText("-50")[0]);
-      await user.click(screen.getAllByText("-50")[0]);
-      await user.click(screen.getAllByText("-50")[0]);
-      await user.click(screen.getAllByText("-50")[0]);
+      await user.click(screen.getAllByText("-100")[0]);
+      await user.click(screen.getAllByText("-100")[0]);
+      await user.click(screen.getAllByText("-100")[0]);
+      await user.click(screen.getAllByText("-100")[0]);
       await user.click(screen.getAllByText("-100")[0]);
       await user.click(screen.getAllByText("-200")[0]);
       await user.click(screen.getAllByText("-300")[0]);
       await user.click(screen.getAllByText("-400")[0]);
       await user.click(screen.getAllByText("-500")[0]);
       await user.click(screen.getAllByText("-600")[0]);
+      await user.click(screen.getAllByText("-700")[0]);
       await user.click(screen.getAllByText("-800")[0]);
       await user.click(screen.getAllByText("-900")[0]);
       await user.click(screen.getAllByText("-1000")[0]);
@@ -1104,13 +1104,13 @@ describe("LP/Body", () => {
         "旋風BF (1P)"
       );
       expect(screen.getAllByTestId("modal-log")[0]).toHaveTextContent(
-        "2950 → 950 (-2000)"
+        "2100 → 100 (-2000)"
       );
       expect(screen.getAllByTestId("modal-log")[9]).toHaveTextContent(
         "旋風BF (1P)"
       );
       expect(screen.getAllByTestId("modal-log")[9]).toHaveTextContent(
-        "7750 → 7650 (-100)"
+        "7500 → 7300 (-200)"
       );
       expect(screen.getAllByTestId("modal-log")[0]).toHaveClass(
         "list-group-item-dark"
@@ -1127,13 +1127,13 @@ describe("LP/Body", () => {
         "旋風BF (1P)"
       );
       expect(screen.getAllByTestId("modal-log")[0]).toHaveTextContent(
-        "3950 → 2950 (-1000)"
+        "3100 → 2100 (-1000)"
       );
       expect(screen.getAllByTestId("modal-log")[9]).toHaveTextContent(
         "旋風BF (1P)"
       );
       expect(screen.getAllByTestId("modal-log")[9]).toHaveTextContent(
-        "7800 → 7750 (-50)"
+        "7600 → 7500 (-100)"
       );
       expect(screen.getAllByTestId("modal-log")[4]).toHaveClass(
         "list-group-item-dark"
