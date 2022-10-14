@@ -7,9 +7,10 @@ import Stats from "./Stats";
 import Login from "./Login";
 
 function App() {
+  const base = process.env.PUBLIC_URL;
   return (
     <div className="App">
-      <Router>
+      <Router basename={base}>
         <Routes>
           <Route path="/" element={<LP />} />
           <Route path="/stats" element={<Stats />} />
