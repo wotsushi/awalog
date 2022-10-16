@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert, Button, Form } from "react-bootstrap";
 import AWANav from "../AWANav";
-import { useLogin, useUser } from "../firebase";
+import { useLogin, useUser } from "lib/firebase";
 import "./style.scss";
 
 const Login = () => {

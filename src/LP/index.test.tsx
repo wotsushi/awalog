@@ -5,7 +5,7 @@ import { MemoryRouter } from "react-router-dom";
 import { User } from "firebase/auth";
 import OriginalLP from ".";
 import { Deck } from "result";
-import { useDecks, useUser } from "firebase";
+import { useDecks, useUser } from "lib/firebase";
 
 jest.mock("firebase");
 const useDecksMock = useDecks as jest.MockedFunction<typeof useDecks>;

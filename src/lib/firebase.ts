@@ -9,7 +9,7 @@ import {
 import { arrayUnion, doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Deck, Result } from "./result";
+import { Deck, Result } from "result";
 
 const firebaseConfig = {
   apiKey: "AIzaSyACynGFpOnCLcKYEjlietudXTjr-FnRc6A",

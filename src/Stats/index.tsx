@@ -6,7 +6,7 @@ import Sidebar from "./Sidebar";
 import Summary, { summaryDeck } from "./Summary";
 
 import AWANav from "AWANav";
-import { useDecks, useResults, useUser } from "firebase";
+import { useDecks, useResults, useUser } from "lib/firebase";
 import "./style.scss";
 import { User } from "firebase/auth";
 

@@ -5,7 +5,7 @@ import { Bar } from "react-chartjs-2";
 import OriginalStats from ".";
 import { Deck, Result } from "../result";
 import { User } from "firebase/auth";
-import { useDecks, useResults, useUser } from "firebase";
+import { useDecks, useResults, useUser } from "lib/firebase";
 import { MemoryRouter } from "react-router-dom";
 
 jest.mock("firebase");

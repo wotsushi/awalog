@@ -1,5 +1,5 @@
 import "./style.scss";
-import { useDecks, useSaveResults, useUser } from "firebase";
+import { useDecks, useSaveResults, useUser } from "lib/firebase";
 import { Container } from "react-bootstrap";
 import "./style.scss";
 import Toolbar from "./Toolbar";
