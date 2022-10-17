@@ -1,5 +1,4 @@
 import { Form, ProgressBar } from "react-bootstrap";
-import { Mode } from "./Game";
 import {
   BsCheckCircle,
   BsCircle,
@@ -7,7 +6,9 @@ import {
   BsXCircle,
 } from "react-icons/bs";
 
-import { Deck, ResultChar } from "../result";
+import { Deck, ResultChar } from "lib/result";
+
+import { Mode } from "./Game";
 
 type Props = {
   decks: Deck[];

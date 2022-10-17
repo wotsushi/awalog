@@ -1,4 +1,5 @@
 import { Button } from "react-bootstrap";
+
 import { LPHistory } from "./Game";
 import "./style.scss";
 

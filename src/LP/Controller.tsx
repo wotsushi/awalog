@@ -1,4 +1,5 @@
 import { Button, Col, Container, Row } from "react-bootstrap";
+
 import { Mode } from "./Game";
 import "./style.scss";
 

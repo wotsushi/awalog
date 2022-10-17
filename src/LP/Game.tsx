@@ -1,7 +1,8 @@
 import { DateTime } from "luxon";
 import { useState } from "react";
 import { Button, Modal, ListGroup } from "react-bootstrap";
-import { Deck, Duel, findWinner, Result } from "../result";
+
+import { Deck, Duel, findWinner, Result } from "lib/result";
 
 export type Mode = "normal" | "+" | "-";
 

@@ -1,6 +1,8 @@
 import classNames from "classnames";
 import Nav from "react-bootstrap/Nav";
-import { Deck } from "../result";
+
+import { Deck } from "lib/result";
+
 import { summaryDeck } from "./Summary";
 
 type Props = {

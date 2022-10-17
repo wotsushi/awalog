@@ -7,9 +7,11 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Deck, findWinner, Result } from "../result";
-import WPChart from "./WPChart";
+
+import { Deck, findWinner, Result } from "lib/result";
+
 import NumberChart from "./NumberChart";
+import WPChart from "./WPChart";
 
 ChartJS.register(
   CategoryScale,

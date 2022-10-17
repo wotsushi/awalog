@@ -1,14 +1,15 @@
+import { User } from "firebase/auth";
 import { useState } from "react";
 import { Container } from "react-bootstrap";
-import { Deck, Result } from "result";
-import Detail from "./Detail";
-import Sidebar from "./Sidebar";
-import Summary, { summaryDeck } from "./Summary";
 
 import AWANav from "AWANav";
 import { useDecks, useResults, useUser } from "lib/firebase";
+import { Deck, Result } from "lib/result";
+
+import Detail from "./Detail";
+import Sidebar from "./Sidebar";
+import Summary, { summaryDeck } from "./Summary";
 import "./style.scss";
-import { User } from "firebase/auth";
 
 type Props = {
   results: Result[];

@@ -1,14 +1,16 @@
-import React from "react";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Bar } from "react-chartjs-2";
-import OriginalStats from ".";
-import { Deck, Result } from "../result";
 import { User } from "firebase/auth";
-import { useDecks, useResults, useUser } from "lib/firebase";
+import React from "react";
+import { Bar } from "react-chartjs-2";
 import { MemoryRouter } from "react-router-dom";
 
-jest.mock("firebase");
+import { useDecks, useResults, useUser } from "lib/firebase";
+import { Deck, Result } from "lib/result";
+
+import OriginalStats from ".";
+
+jest.mock("lib/firebase");
 const useDecksMock = useDecks as jest.MockedFunction<typeof useDecks>;
 const useResultsMock = useResults as jest.MockedFunction<typeof useResults>;
 const useUserMock = useUser as jest.MockedFunction<typeof useUser>;

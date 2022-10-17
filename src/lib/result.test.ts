@@ -1,5 +1,4 @@
-import { DateTime } from "luxon";
-import { findWinner } from "./result";
+import { findWinner } from "lib/result";
 
 describe('findWinner', () => {
   const defaultFindWinner = (format: "Single" | "Match") => (duels: [number, number][]) => findWinner({

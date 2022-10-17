@@ -6,10 +6,19 @@ import {
   signOut,
   User,
 } from "firebase/auth";
-import { arrayUnion, doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
+import {
+  arrayUnion,
+  doc,
+  getDoc,
+  getFirestore,
+  updateDoc,
+} from "firebase/firestore";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Deck, Result } from "result";
+
+import { Deck, Result } from "lib/result";
+
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyACynGFpOnCLcKYEjlietudXTjr-FnRc6A",
@@ -40,7 +49,7 @@ export const useDecks = () => {
   }, []);
 
   return decks;
-}
+};
 
 export const useResults = () => {
   const [results, setResults] = useState<Result[]>([]);
@@ -54,16 +63,17 @@ export const useResults = () => {
   }, []);
 
   return results;
-}
+};
 
-export const useSaveResults = () => useCallback((result: Result) => {
+export const useSaveResults = () =>
+  useCallback((result: Result) => {
     const accessDB = async () => {
       await updateDoc(resultsRef, {
         data: arrayUnion(result),
       });
     };
     accessDB();
-}, []);
+  }, []);
 
 export const useUser = () => {
   const [user, setUser] = useState<User>();
@@ -79,19 +89,25 @@ export const useUser = () => {
     return defer;
   }, []);
   return user;
-}
+};
 
 export const useLogin = (failedLogin: () => void) => {
   const navigate = useNavigate();
-  return useCallback((email: string, password: string) => {
-  signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        navigate('/');
-      })
-      .catch(() => {
-        failedLogin();
-      })}, [failedLogin, navigate]);
-}
+  return useCallback(
+    (email: string, password: string) => {
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          navigate("/");
+        })
+        .catch(() => {
+          failedLogin();
+        });
+    },
+    [failedLogin, navigate]
+  );
+};
 
-export const useLogout = () => useCallback(() => {
-  signOut(auth)}, [])
+export const useLogout = () =>
+  useCallback(() => {
+    signOut(auth);
+  }, []);
