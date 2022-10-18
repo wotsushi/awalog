@@ -1,9 +1,9 @@
-import classNames from "classnames";
-import Nav from "react-bootstrap/Nav";
+import classNames from 'classnames';
+import Nav from 'react-bootstrap/Nav';
 
-import { Deck } from "lib/result";
+import { Deck } from 'lib/result';
 
-import { summaryDeck } from "./Summary";
+import { summaryDeck } from './Summary';
 
 type Props = {
   decks: Deck[];
@@ -16,7 +16,7 @@ const Sidebar = (props: Props) => {
   return (
     <Nav
       variant="pills"
-      className={classNames("flex-column", "sidebar")}
+      className={classNames('flex-column', 'sidebar')}
       onSelect={(eventKey) => {
         if (eventKey) {
           setDeck(

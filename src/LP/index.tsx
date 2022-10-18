@@ -1,16 +1,16 @@
-import "./style.scss";
+import './style.scss';
 
-import { User } from "firebase/auth";
-import { Container } from "react-bootstrap";
+import { User } from 'firebase/auth';
+import { Container } from 'react-bootstrap';
 
-import AWANav from "AWANav";
-import { useDecks, useSaveResults, useUser } from "lib/firebase";
-import { Deck, Result, toResultChars } from "lib/result";
+import AWANav from 'AWANav';
+import { useDecks, useSaveResults, useUser } from 'lib/firebase';
+import { Deck, Result, toResultChars } from 'lib/result';
 
-import { useGame } from "./Game";
-import { useCoinModal, useDiceModal, useResetModal } from "./modal";
-import Side from "./Side";
-import Toolbar from "./Toolbar";
+import { useGame } from './Game';
+import { useCoinModal, useDiceModal, useResetModal } from './modal';
+import Side from './Side';
+import Toolbar from './Toolbar';
 
 type Props = {
   decks: Deck[];

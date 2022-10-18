@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { useState } from 'react';
+import { Button, Modal } from 'react-bootstrap';
 
 type ResetProps = {
   reset: () => void;
@@ -37,7 +37,7 @@ export const useCoinModal = () => {
   const [showModal, setShowModal] = useState(false);
   const close = () => setShowModal(false);
   const CoinModal = () => {
-    const result = Math.random() > 0.5 ? "オモテ" : "ウラ";
+    const result = Math.random() > 0.5 ? 'オモテ' : 'ウラ';
     return (
       <Modal show={showModal} onHide={close}>
         <Modal.Header closeButton>コイントス結果</Modal.Header>

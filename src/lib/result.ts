@@ -1,16 +1,20 @@
 export type Deck = {
   id: number;
   name: string;
-}
+};
 type Player = {
   lp: number;
   isFirst: boolean;
   lo?: boolean;
-}
-export type Duel = {1: Player, 2: Player};
-export type Result = {decks: {1: number, 2: number}, duels: Duel[], format: 'Single' | 'Match', datetime: string};
-export type ResultChar = "W" | "L" | "D";
-
+};
+export type Duel = { 1: Player; 2: Player };
+export type Result = {
+  decks: { 1: number; 2: number };
+  duels: Duel[];
+  format: 'Single' | 'Match';
+  datetime: string;
+};
+export type ResultChar = 'W' | 'L' | 'D';
 
 const winner = (duel: Duel) => {
   if (duel[1].lo && duel[2].lo) {
@@ -24,12 +28,11 @@ const winner = (duel: Duel) => {
   }
   if (duel[1].lp > 0) {
     return 1;
-  }
-  else if (duel[2].lp > 0) {
+  } else if (duel[2].lp > 0) {
     return 2;
   }
   return 0;
-}
+};
 
 export const findWinner = (result: Result) => {
   const { duels } = result;
@@ -63,16 +66,16 @@ export const findWinner = (result: Result) => {
     return 2;
   }
   return 0;
-}
+};
 
 export const toResultChars = (result: Result, i: 1 | 2): ResultChar[] =>
   result.duels.map((duel) => {
     const w = winner(duel);
     if (w === 0) {
-      return "D";
+      return 'D';
     }
     if (w === i) {
-      return "W"
+      return 'W';
     }
-    return "L"
+    return 'L';
   });

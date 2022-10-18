@@ -6,12 +6,12 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
+} from 'chart.js';
 
-import { Deck, findWinner, Result } from "lib/result";
+import { Deck, findWinner, Result } from 'lib/result';
 
-import NumberChart from "./NumberChart";
-import WPChart from "./WPChart";
+import NumberChart from './NumberChart';
+import WPChart from './WPChart';
 
 ChartJS.register(
   CategoryScale,
@@ -29,7 +29,7 @@ type Props = {
 
 export const summaryDeck: Deck = {
   id: 0,
-  name: "サマリー",
+  name: 'サマリー',
 };
 
 const calcSummary = (results: Result[]) => {

@@ -1,39 +1,37 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp } from 'firebase/app';
 import {
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
   User,
-} from "firebase/auth";
+} from 'firebase/auth';
 import {
   arrayUnion,
   doc,
   getDoc,
   getFirestore,
   updateDoc,
-} from "firebase/firestore";
-import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+} from 'firebase/firestore';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { Deck, Result } from "lib/result";
-
-
+import { Deck, Result } from 'lib/result';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyACynGFpOnCLcKYEjlietudXTjr-FnRc6A",
-  authDomain: "awa-log.firebaseapp.com",
-  projectId: "awa-log",
-  storageBucket: "awa-log.appspot.com",
-  messagingSenderId: "259054179430",
-  appId: "1:259054179430:web:d3f2f15bfe0e79f49309a7",
+  apiKey: 'AIzaSyACynGFpOnCLcKYEjlietudXTjr-FnRc6A',
+  authDomain: 'awa-log.firebaseapp.com',
+  projectId: 'awa-log',
+  storageBucket: 'awa-log.appspot.com',
+  messagingSenderId: '259054179430',
+  appId: '1:259054179430:web:d3f2f15bfe0e79f49309a7',
 };
 
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
-const decksRef = doc(db, "1103", "decks");
-const resultsRef = doc(db, "1103", "results");
+const decksRef = doc(db, '1103', 'decks');
+const resultsRef = doc(db, '1103', 'results');
 
 const auth = getAuth(app);
 
@@ -43,7 +41,7 @@ export const useDecks = () => {
     const accessDB = async () => {
       const doc = await getDoc(decksRef);
       const decksData = doc.data() as { data: Deck[] };
-      setDecks(decksData["data"]);
+      setDecks(decksData['data']);
     };
     accessDB();
   }, []);
@@ -57,7 +55,7 @@ export const useResults = () => {
     const accessDB = async () => {
       const resultsDoc = await getDoc(resultsRef);
       const resultsData = resultsDoc.data() as { data: Result[] };
-      setResults(resultsData["data"]);
+      setResults(resultsData['data']);
     };
     accessDB();
   }, []);
@@ -97,7 +95,7 @@ export const useLogin = (failedLogin: () => void) => {
     (email: string, password: string) => {
       signInWithEmailAndPassword(auth, email, password)
         .then(() => {
-          navigate("/");
+          navigate('/');
         })
         .catch(() => {
           failedLogin();

@@ -1,7 +1,7 @@
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from 'react-bootstrap';
 
-import { Mode } from "./Game";
-import "./style.scss";
+import { Mode } from './Game';
+import './style.scss';
 
 const quickButtons = [
   [-100, -200, -300],
@@ -11,10 +11,10 @@ const quickButtons = [
 ];
 
 const manualButtons = [
-  ["7", "8", "9"],
-  ["4", "5", "6"],
-  ["1", "2", "3"],
-  ["0", "00", "="],
+  ['7', '8', '9'],
+  ['4', '5', '6'],
+  ['1', '2', '3'],
+  ['0', '00', '='],
 ];
 
 type Props = {
@@ -55,7 +55,7 @@ const Normal = (props: Props) => (
           variant="outline-secondary"
           className="button"
           size="lg"
-          onClick={() => props.changeMode("+")}
+          onClick={() => props.changeMode('+')}
           disabled={props.disabled}
         >
           +
@@ -66,7 +66,7 @@ const Normal = (props: Props) => (
           variant="outline-secondary"
           className="button"
           size="lg"
-          onClick={() => props.changeMode("-")}
+          onClick={() => props.changeMode('-')}
           disabled={props.disabled}
         >
           -
@@ -114,11 +114,11 @@ const Manual = (props: Props) => (
       <Col>
         <Button
           variant={
-            props.mode === ("+" as Mode) ? "secondary" : "outline-secondary"
+            props.mode === ('+' as Mode) ? 'secondary' : 'outline-secondary'
           }
           className="button"
           size="lg"
-          onClick={() => props.changeMode("+")}
+          onClick={() => props.changeMode('+')}
           disabled={props.disabled}
         >
           +
@@ -127,11 +127,11 @@ const Manual = (props: Props) => (
       <Col>
         <Button
           variant={
-            props.mode === ("-" as Mode) ? "secondary" : "outline-secondary"
+            props.mode === ('-' as Mode) ? 'secondary' : 'outline-secondary'
           }
           className="button"
           size="lg"
-          onClick={() => props.changeMode("-")}
+          onClick={() => props.changeMode('-')}
           disabled={props.disabled}
         >
           -
@@ -143,7 +143,7 @@ const Manual = (props: Props) => (
           className="button"
           size="lg"
           onClick={() => {
-            props.changeMode("normal");
+            props.changeMode('normal');
           }}
           disabled={props.disabled}
         >
@@ -155,6 +155,6 @@ const Manual = (props: Props) => (
 );
 
 const Controller = (props: Props) =>
-  props.mode === "normal" ? <Normal {...props} /> : <Manual {...props} />;
+  props.mode === 'normal' ? <Normal {...props} /> : <Manual {...props} />;
 
 export default Controller;

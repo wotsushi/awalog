@@ -1,7 +1,7 @@
-import { Button } from "react-bootstrap";
+import { Button } from 'react-bootstrap';
 
-import { LPHistory } from "./Game";
-import "./style.scss";
+import { LPHistory } from './Game';
+import './style.scss';
 
 const Reset = (props: { onClick: () => void }) => {
   return (
@@ -62,7 +62,7 @@ const Redo = (props: { lpHistory: LPHistory; redo: () => void }) => (
   </Button>
 );
 
-const LPLog = (props: Pick<Props, "showLPHistoryModal">) => (
+const LPLog = (props: Pick<Props, 'showLPHistoryModal'>) => (
   <Button variant="outline-secondary" onClick={props.showLPHistoryModal}>
     ログ
   </Button>

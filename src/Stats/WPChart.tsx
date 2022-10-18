@@ -1,4 +1,4 @@
-import { Bar } from "react-chartjs-2";
+import { Bar } from 'react-chartjs-2';
 
 type Props = {
   title: string;
@@ -17,7 +17,7 @@ const WPChart = (props: Props) => {
           y: {
             title: {
               display: true,
-              text: "勝率[%]",
+              text: '勝率[%]',
             },
           },
         },
@@ -35,9 +35,9 @@ const WPChart = (props: Props) => {
         labels: deckNames,
         datasets: [
           {
-            label: "勝率",
+            label: '勝率',
             data: wp,
-            backgroundColor: "rgba(53, 162, 235, 0.5)",
+            backgroundColor: 'rgba(53, 162, 235, 0.5)',
           },
         ],
       }}

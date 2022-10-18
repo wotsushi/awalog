@@ -1,14 +1,14 @@
 .toolbar {
   width: 65%;
   display: flex;
-	flex-direction: row;
-	justify-content: space-between;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .modal-log {
   display: flex;
-	flex-direction: row;
-	justify-content: space-between;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .modal-player-name {
@@ -19,17 +19,16 @@
   min-width: 160px;
 }
 
-
 .sides {
   display: flex;
-	flex-direction: row;
-	justify-content: space-between;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .side {
   width: 450px;
   display: flex;
-	flex-direction: column;
+  flex-direction: column;
 }
 
 .lp-box-left {

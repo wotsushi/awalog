@@ -1,8 +1,8 @@
-import { User } from "firebase/auth";
-import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { User } from 'firebase/auth';
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
-import { useLogout } from "lib/firebase";
+import { useLogout } from 'lib/firebase';
 
 type Props = {
   disabledStats?: boolean;

@@ -1,4 +1,4 @@
-import { Bar } from "react-chartjs-2";
+import { Bar } from 'react-chartjs-2';
 
 type Props = {
   title: string;
@@ -34,19 +34,19 @@ const NumberChart = (props: Props) => {
         labels: deckNames,
         datasets: [
           {
-            label: "勝利数",
+            label: '勝利数',
             data: win,
-            backgroundColor: "rgba(53, 162, 235, 0.5)",
+            backgroundColor: 'rgba(53, 162, 235, 0.5)',
           },
           {
-            label: "敗北数",
+            label: '敗北数',
             data: lose,
-            backgroundColor: "rgb(255, 99, 132, 0.5)",
+            backgroundColor: 'rgb(255, 99, 132, 0.5)',
           },
           {
-            label: "引き分け数",
+            label: '引き分け数',
             data: draw,
-            backgroundColor: "rgb(75, 192, 192, 0.5)",
+            backgroundColor: 'rgb(75, 192, 192, 0.5)',
           },
         ],
       }}

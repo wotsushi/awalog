@@ -7,6 +7,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install modules
         run: yarn
+      - name: Run Prettier Check
+        run: yarn prettier
       - name: Run ESLint
         run: yarn eslint
       - name: Run tests

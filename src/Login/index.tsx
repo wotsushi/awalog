@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { Alert, Button, Form } from "react-bootstrap";
+import { useState } from 'react';
+import { Alert, Button, Form } from 'react-bootstrap';
 
-import AWANav from "AWANav";
-import { useLogin, useUser } from "lib/firebase";
+import AWANav from 'AWANav';
+import { useLogin, useUser } from 'lib/firebase';
 
-import "./style.scss";
+import './style.scss';
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [failedLogin, setFailedLogin] = useState(false);
   const user = useUser();
   const login = useLogin(() => setFailedLogin(true));

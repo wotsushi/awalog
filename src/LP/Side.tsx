@@ -1,8 +1,8 @@
-import { Deck, ResultChar } from "lib/result";
+import { Deck, ResultChar } from 'lib/result';
 
-import Controller from "./Controller";
-import { Player, PlayerCtl } from "./Game";
-import Window from "./Window";
+import Controller from './Controller';
+import { Player, PlayerCtl } from './Game';
+import Window from './Window';
 
 type Props = {
   decks: Deck[];

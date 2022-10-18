@@ -1,10 +1,10 @@
-import { DateTime } from "luxon";
-import { useState } from "react";
-import { Button, Modal, ListGroup } from "react-bootstrap";
+import { DateTime } from 'luxon';
+import { useState } from 'react';
+import { Button, Modal, ListGroup } from 'react-bootstrap';
 
-import { Deck, Duel, findWinner, Result } from "lib/result";
+import { Deck, Duel, findWinner, Result } from 'lib/result';
 
-export type Mode = "normal" | "+" | "-";
+export type Mode = 'normal' | '+' | '-';
 
 export type LPLog = {
   playerID: number;
@@ -16,7 +16,7 @@ export type LPHistory = {
   logs: LPLog[];
   head: number;
 };
-export type LPHistoryCtl = ReturnType<typeof useLPHistory>["ctl"];
+export type LPHistoryCtl = ReturnType<typeof useLPHistory>['ctl'];
 
 export type Player = {
   id: number;
@@ -28,7 +28,7 @@ export type Player = {
   buf: number;
 };
 
-export type PlayerCtl = ReturnType<typeof useGame>["ctl1"];
+export type PlayerCtl = ReturnType<typeof useGame>['ctl1'];
 
 const initHistory = { logs: [], head: -1 };
 
@@ -84,7 +84,7 @@ const usePlayer = (id: number, decks: Deck[]) => {
     lp: 8000,
     isFirst: false,
     lo: false,
-    mode: "normal" as Mode,
+    mode: 'normal' as Mode,
     buf: 0,
   });
 
@@ -119,22 +119,22 @@ const usePlayer = (id: number, decks: Deck[]) => {
       lp: 8000,
       isFirst: false,
       lo: false,
-      mode: "normal" as Mode,
+      mode: 'normal' as Mode,
       buf: 0,
     });
   };
   const changeMode = (mode: Mode) => {
-    setPlayer({ ...player, buf: mode === "normal" ? 0 : player.buf, mode });
+    setPlayer({ ...player, buf: mode === 'normal' ? 0 : player.buf, mode });
   };
   const pushKey = (key: string): [number, number] => {
-    if (key === "=") {
-      const sign = player.mode === "+" ? 1 : -1;
+    if (key === '=') {
+      const sign = player.mode === '+' ? 1 : -1;
       const from = player.lp;
       const to = Math.max(0, player.lp + sign * player.buf);
       setPlayer({
         ...player,
         lp: to,
-        mode: "normal",
+        mode: 'normal',
         buf: 0,
       });
       return [from, to];
@@ -190,7 +190,7 @@ const useNextGameModal = (commit: () => void) => {
 
 const toStringWithSign = (x: number) => {
   if (x > 0) {
-    return "+" + x.toString();
+    return '+' + x.toString();
   } else {
     return x.toString();
   }
@@ -232,7 +232,7 @@ const useHistoryModal = (lpHistory: LPHistory, decks: [Deck, Deck]) => {
     const logs = lpHistory.logs.map(({ playerID, from, to }, i) => {
       return (
         <ListGroup.Item
-          variant={i === head ? "dark" : ""}
+          variant={i === head ? 'dark' : ''}
           key={i}
           data-testid="modal-log"
         >
@@ -285,8 +285,8 @@ export const useGame = (decks: Deck[], save: (result: Result) => void) => {
   const [result, setResult] = useState<Result>({
     decks: { 1: player1.deck.id, 2: player2.deck.id },
     duels: [],
-    format: "Match",
-    datetime: DateTime.now().toFormat("yyyy-MM-dd HH:mm"),
+    format: 'Match',
+    datetime: DateTime.now().toFormat('yyyy-MM-dd HH:mm'),
   });
 
   const reset = () => {
@@ -296,8 +296,8 @@ export const useGame = (decks: Deck[], save: (result: Result) => void) => {
     setResult({
       decks: { 1: player1.deck.id, 2: player2.deck.id },
       duels: [],
-      format: "Match",
-      datetime: DateTime.now().toFormat("yyyy-MM-dd HH:mm"),
+      format: 'Match',
+      datetime: DateTime.now().toFormat('yyyy-MM-dd HH:mm'),
     });
   };
   const commitGame = () => {
