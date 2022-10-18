@@ -37,6 +37,9 @@ const calcSummary = (results: Result[]) => {
     {};
   results.forEach((result) => {
     const { decks } = result;
+    if (decks[1] === decks[2]) {
+      return;
+    }
     if (!(decks[1] in summary)) {
       summary[decks[1]] = { win: 0, lose: 0, draw: 0 };
     }

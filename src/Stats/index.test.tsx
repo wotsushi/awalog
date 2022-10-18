@@ -280,6 +280,37 @@ describe('戦績サマリー表示', () => {
     expect(screen.getByText('敗北数:ヒーロービート=2')).toBeInTheDocument();
     expect(screen.getByText('引き分け数:ヒーロービート=0')).toBeInTheDocument();
   });
+  it('ミラーマッチの戦績のみ存在する場合、戦績は空', async () => {
+    render(
+      <Stats
+        results={[
+          {
+            decks: { 1: 1, 2: 1 },
+            duels: [
+              {
+                1: { lp: 1000, isFirst: true },
+                2: { lp: 0, isFirst: false },
+              },
+              {
+                1: { lp: 2000, isFirst: true },
+                2: { lp: 0, isFirst: false },
+              },
+            ],
+            format: 'Match',
+            datetime: '2022-09-23 08:45',
+          },
+        ]}
+        decks={[
+          { id: 1, name: '旋風BF' },
+          { id: 2, name: '旋風BF' },
+        ]}
+      />
+    );
+
+    expect(screen.getByText('サマリー')).toHaveClass('active');
+
+    expect(screen.queryByText(/.*:.*=/)).not.toBeInTheDocument();
+  });
 });
 
 describe('戦績個別表示', () => {
