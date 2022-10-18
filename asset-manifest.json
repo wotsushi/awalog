@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/awalog/static/css/main.febc5ff5.css",
-    "main.js": "/awalog/static/js/main.688206c5.js",
+    "main.css": "/awalog/static/css/main.371aac7b.css",
+    "main.js": "/awalog/static/js/main.9ce3cc34.js",
     "static/js/787.cda612ba.chunk.js": "/awalog/static/js/787.cda612ba.chunk.js",
     "index.html": "/awalog/index.html",
-    "main.febc5ff5.css.map": "/awalog/static/css/main.febc5ff5.css.map",
-    "main.688206c5.js.map": "/awalog/static/js/main.688206c5.js.map",
+    "main.371aac7b.css.map": "/awalog/static/css/main.371aac7b.css.map",
+    "main.9ce3cc34.js.map": "/awalog/static/js/main.9ce3cc34.js.map",
     "787.cda612ba.chunk.js.map": "/awalog/static/js/787.cda612ba.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.febc5ff5.css",
-    "static/js/main.688206c5.js"
+    "static/css/main.371aac7b.css",
+    "static/js/main.9ce3cc34.js"
   ]
 }
