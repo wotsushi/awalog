@@ -1,4 +1,5 @@
 import { Button } from 'react-bootstrap';
+import { FcCheckmark, FcHighPriority } from 'react-icons/fc';
 
 import { LPHistory } from './Game';
 import './style.scss';
@@ -75,6 +76,7 @@ type Props = {
   showDiceModal: () => void;
   disabled: boolean;
   lpHistory: LPHistory;
+  succeedSave: boolean | undefined;
   lo: () => void;
   undo: () => void;
   redo: () => void;
@@ -88,6 +90,7 @@ const Toolbar = (props: Props) => {
     showDiceModal,
     disabled,
     lpHistory,
+    succeedSave,
     lo,
     undo,
     redo,
@@ -95,6 +98,15 @@ const Toolbar = (props: Props) => {
   return (
     <div className="toolbar">
       <Reset onClick={showResetModal} />
+      <div className="game-status">
+        {succeedSave === undefined ? (
+          ''
+        ) : succeedSave ? (
+          <FcCheckmark />
+        ) : (
+          <FcHighPriority />
+        )}
+      </div>
       <LO disabled={disabled} onClick={lo} />
       <Coin onClick={showCoinModal} />
       <Dice onClick={showDiceModal} />

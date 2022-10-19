@@ -63,15 +63,20 @@ export const useResults = () => {
   return results;
 };
 
-export const useSaveResults = () =>
-  useCallback((result: Result) => {
-    const accessDB = async () => {
-      await updateDoc(resultsRef, {
-        data: arrayUnion(result),
-      });
-    };
-    accessDB();
-  }, []);
+export const useSaveResults = (thenFn?: () => void, catchFn?: () => void) =>
+  useCallback(
+    (result: Result) => {
+      const accessDB = async () => {
+        await updateDoc(resultsRef, {
+          data: arrayUnion(result),
+        })
+          .then(thenFn)
+          .catch(catchFn);
+      };
+      accessDB();
+    },
+    [thenFn, catchFn]
+  );
 
 export const useUser = () => {
   const [user, setUser] = useState<User>();

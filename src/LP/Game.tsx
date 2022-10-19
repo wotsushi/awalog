@@ -278,7 +278,11 @@ const useHistoryModal = (lpHistory: LPHistory, decks: [Deck, Deck]) => {
   return { LPHistoryModal, showLPHistoryModal };
 };
 
-export const useGame = (decks: Deck[], save: (result: Result) => void) => {
+export const useGame = (
+  decks: Deck[],
+  save: (result: Result) => void,
+  resetSuccedSave: () => void
+) => {
   const { lpHistory, ctl: historyCtl } = useLPHistory();
   const { player: player1, ctl: player1Ctl } = usePlayer(1, decks);
   const { player: player2, ctl: player2Ctl } = usePlayer(2, decks);
@@ -299,6 +303,7 @@ export const useGame = (decks: Deck[], save: (result: Result) => void) => {
       format: 'Match',
       datetime: DateTime.now().toFormat('yyyy-MM-dd HH:mm'),
     });
+    resetSuccedSave();
   };
   const commitGame = () => {
     setResult({

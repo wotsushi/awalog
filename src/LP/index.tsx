@@ -1,11 +1,11 @@
 import './style.scss';
 
-import { User } from 'firebase/auth';
+import { useState } from 'react';
 import { Container } from 'react-bootstrap';
 
 import AWANav from 'AWANav';
 import { useDecks, useSaveResults, useUser } from 'lib/firebase';
-import { Deck, Result, toResultChars } from 'lib/result';
+import { Deck, toResultChars } from 'lib/result';
 
 import { useGame } from './Game';
 import { useCoinModal, useDiceModal, useResetModal } from './modal';
@@ -14,15 +14,19 @@ import Toolbar from './Toolbar';
 
 type Props = {
   decks: Deck[];
-  save: (result: Result) => void;
-  user: User | undefined;
 };
 
-const Content = (props: Props) => {
-  const { decks, save, user } = props;
+const Content = ({ decks }: Props) => {
+  const user = useUser();
+
   const { ResetModal, showResetModal } = useResetModal();
   const { CoinModal, showCoinModal } = useCoinModal();
   const { DiceModal, showDiceModal } = useDiceModal();
+  const [succeedSave, setSucceedSave] = useState<boolean>();
+  const save = useSaveResults(
+    () => setSucceedSave(true),
+    () => setSucceedSave(false)
+  );
   const {
     result,
     player1,
@@ -40,7 +44,7 @@ const Content = (props: Props) => {
     LPHistoryModal,
     showLPHistoryModal,
     isPlaying,
-  } = useGame(decks, save);
+  } = useGame(decks, save, () => setSucceedSave(undefined));
 
   return (
     <>
@@ -53,6 +57,7 @@ const Content = (props: Props) => {
           showDiceModal={showDiceModal}
           disabled={disabled || (!player1.lo && !player2.lo)}
           lpHistory={lpHistory}
+          succeedSave={succeedSave}
           lo={lo}
           undo={undo}
           redo={redo}
@@ -88,14 +93,12 @@ const Content = (props: Props) => {
 
 const LP = () => {
   const decks = useDecks();
-  const save = useSaveResults();
-  const user = useUser();
 
   if (decks.length === 0) {
     return null;
   }
 
-  return <Content decks={decks} save={save} user={user} />;
+  return <Content decks={decks} />;
 };
 
 export default LP;
