@@ -1,4 +1,5 @@
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import React, { ReactNode } from 'react';
+import { Button as OriginalButton, Col, Container, Row } from 'react-bootstrap';
 
 import { Mode } from './Game';
 import './style.scss';
@@ -16,6 +17,24 @@ const manualButtons = [
   ['1', '2', '3'],
   ['0', '00', '='],
 ];
+
+type ButtonProps = {
+  onClick: () => void;
+  disabled: boolean;
+  children?: ReactNode;
+};
+
+const Button = ({ onClick, disabled, children }: ButtonProps) => (
+  <OriginalButton
+    variant="outline-secondary"
+    className="button"
+    style={{ fontSize: '26px' }}
+    onClick={onClick}
+    disabled={disabled}
+  >
+    {children}
+  </OriginalButton>
+);
 
 type Props = {
   addLP: (lp: number) => void;
@@ -35,9 +54,6 @@ const Normal = (props: Props) => (
             return (
               <Col key={j}>
                 <Button
-                  variant="outline-secondary"
-                  className="button"
-                  size="lg"
                   onClick={() => props.addLP(val)}
                   disabled={props.disabled}
                 >
@@ -51,36 +67,18 @@ const Normal = (props: Props) => (
     })}
     <Row className="button-row">
       <Col>
-        <Button
-          variant="outline-secondary"
-          className="button"
-          size="lg"
-          onClick={() => props.changeMode('+')}
-          disabled={props.disabled}
-        >
-          +
+        <Button onClick={() => props.changeMode('+')} disabled={props.disabled}>
+          ＋
         </Button>
       </Col>
       <Col>
-        <Button
-          variant="outline-secondary"
-          className="button"
-          size="lg"
-          onClick={() => props.changeMode('-')}
-          disabled={props.disabled}
-        >
-          -
+        <Button onClick={() => props.changeMode('-')} disabled={props.disabled}>
+          −
         </Button>
       </Col>
       <Col>
-        <Button
-          variant="outline-secondary"
-          className="button"
-          size="lg"
-          onClick={props.halfLP}
-          disabled={props.disabled}
-        >
-          1/2
+        <Button onClick={props.halfLP} disabled={props.disabled}>
+          ÷2
         </Button>
       </Col>
     </Row>
@@ -96,9 +94,6 @@ const Manual = (props: Props) => (
             return (
               <Col key={j}>
                 <Button
-                  variant="outline-secondary"
-                  className="button"
-                  size="lg"
                   onClick={() => props.pushKey(val)}
                   disabled={props.disabled}
                 >
@@ -112,42 +107,23 @@ const Manual = (props: Props) => (
     })}
     <Row className="button-row">
       <Col>
-        <Button
-          variant={
-            props.mode === ('+' as Mode) ? 'secondary' : 'outline-secondary'
-          }
-          className="button"
-          size="lg"
-          onClick={() => props.changeMode('+')}
-          disabled={props.disabled}
-        >
-          +
+        <Button onClick={() => props.changeMode('+')} disabled={props.disabled}>
+          ＋
+        </Button>
+      </Col>
+      <Col>
+        <Button onClick={() => props.changeMode('-')} disabled={props.disabled}>
+          −
         </Button>
       </Col>
       <Col>
         <Button
-          variant={
-            props.mode === ('-' as Mode) ? 'secondary' : 'outline-secondary'
-          }
-          className="button"
-          size="lg"
-          onClick={() => props.changeMode('-')}
-          disabled={props.disabled}
-        >
-          -
-        </Button>
-      </Col>
-      <Col>
-        <Button
-          variant="outline-secondary"
-          className="button"
-          size="lg"
           onClick={() => {
             props.changeMode('normal');
           }}
           disabled={props.disabled}
         >
-          C
+          Ｃ
         </Button>
       </Col>
     </Row>

@@ -167,7 +167,7 @@ describe('LP計算', () => {
       expect(screen.getAllByText('-100')).toHaveLength(2);
       expect(screen.queryByText('7')).not.toBeInTheDocument();
 
-      await user.click(screen.getAllByText('+')[0]);
+      await user.click(screen.getAllByText('＋')[0]);
 
       expect(screen.getByText('-100')).toBeInTheDocument();
       expect(screen.getByText('7')).toBeInTheDocument();
@@ -178,7 +178,7 @@ describe('LP計算', () => {
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
 
-      await user.click(screen.getAllByText('+')[0]);
+      await user.click(screen.getAllByText('＋')[0]);
       await user.click(screen.getByText('1'));
       await user.click(screen.getByText('2'));
       await user.click(screen.getByText('3'));
@@ -194,7 +194,7 @@ describe('LP計算', () => {
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
       expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
 
-      await user.click(screen.getAllByText('+')[0]);
+      await user.click(screen.getAllByText('＋')[0]);
       await user.click(screen.getByText('1'));
       await user.click(screen.getByText('2'));
       await user.click(screen.getByText('3'));
@@ -207,7 +207,7 @@ describe('LP計算', () => {
     it('LP加算後はnormalモードに戻る', async () => {
       render(<LP />);
       await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('+')[0]);
+      await user.click(screen.getAllByText('＋')[0]);
 
       expect(screen.getByText('-100')).toBeInTheDocument();
       expect(screen.getByText('7')).toBeInTheDocument();
@@ -225,7 +225,7 @@ describe('LP計算', () => {
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
       expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
 
-      await user.click(screen.getAllByText('+')[1]);
+      await user.click(screen.getAllByText('＋')[1]);
       await user.click(screen.getByText('9'));
       await user.click(screen.getByText('0'));
       await user.click(screen.getByText('00'));
@@ -241,7 +241,7 @@ describe('LP計算', () => {
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
 
-      await user.click(screen.getAllByText('+')[0]);
+      await user.click(screen.getAllByText('＋')[0]);
       await user.click(screen.getByText('1'));
       await user.click(screen.getByText('00'));
       await user.click(screen.getByText('00'));
@@ -259,7 +259,7 @@ describe('LP計算', () => {
       expect(screen.getAllByText('-100')).toHaveLength(2);
       expect(screen.queryByText('7')).not.toBeInTheDocument();
 
-      await user.click(screen.getAllByText('+')[0]);
+      await user.click(screen.getAllByText('＋')[0]);
 
       expect(screen.getByText('-100')).toBeInTheDocument();
       expect(screen.getByText('7')).toBeInTheDocument();
@@ -270,7 +270,7 @@ describe('LP計算', () => {
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
 
-      await user.click(screen.getAllByText('-')[0]);
+      await user.click(screen.getAllByText('−')[0]);
       await user.click(screen.getByText('1'));
       await user.click(screen.getByText('2'));
       await user.click(screen.getByText('3'));
@@ -286,7 +286,7 @@ describe('LP計算', () => {
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
       expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
 
-      await user.click(screen.getAllByText('-')[0]);
+      await user.click(screen.getAllByText('−')[0]);
       await user.click(screen.getByText('1'));
       await user.click(screen.getByText('2'));
       await user.click(screen.getByText('3'));
@@ -299,7 +299,7 @@ describe('LP計算', () => {
     it('LP減算後はnormalモードに戻る', async () => {
       render(<LP />);
       await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('-')[0]);
+      await user.click(screen.getAllByText('−')[0]);
 
       expect(screen.getByText('-100')).toBeInTheDocument();
       expect(screen.getByText('7')).toBeInTheDocument();
@@ -317,7 +317,7 @@ describe('LP計算', () => {
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
       expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
 
-      await user.click(screen.getAllByText('-')[1]);
+      await user.click(screen.getAllByText('−')[1]);
       await user.click(screen.getByText('1'));
       await user.click(screen.getByText('='));
 
@@ -327,7 +327,7 @@ describe('LP計算', () => {
     it('LPが1233の状態でLPを-1234するとLPは0になる（マイナスにはならない）', async () => {
       render(<LP />);
       await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('-')[0]);
+      await user.click(screen.getAllByText('−')[0]);
       await user.click(screen.getByText('6'));
       await user.click(screen.getByText('7'));
       await user.click(screen.getByText('6'));
@@ -336,7 +336,7 @@ describe('LP計算', () => {
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('1233');
 
-      await user.click(screen.getAllByText('-')[0]);
+      await user.click(screen.getAllByText('−')[0]);
       await user.click(screen.getByText('1'));
       await user.click(screen.getByText('2'));
       await user.click(screen.getByText('3'));
@@ -350,12 +350,12 @@ describe('LP計算', () => {
     it('加算モードでキャンセルするとnormalモードになる', async () => {
       render(<LP />);
       await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('+')[0]);
+      await user.click(screen.getAllByText('＋')[0]);
 
       expect(screen.getByText('7')).toBeInTheDocument();
       expect(screen.getByText('-100')).toBeInTheDocument();
 
-      await user.click(screen.getByText('C'));
+      await user.click(screen.getByText('Ｃ'));
 
       expect(screen.queryByText('7')).not.toBeInTheDocument();
       expect(screen.getAllByText('-100')).toHaveLength(2);
@@ -363,14 +363,14 @@ describe('LP計算', () => {
     it('減算モードでLP入力中にキャンセルするとnormalモードになり入力していたLPもクリアされる', async () => {
       render(<LP />);
       await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('-')[1]);
+      await user.click(screen.getAllByText('−')[1]);
       await user.click(screen.getByText('1'));
 
       expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000-1');
       expect(screen.getByText('7')).toBeInTheDocument();
       expect(screen.getAllByText('-100')).toHaveLength(1);
 
-      await user.click(screen.getByText('C'));
+      await user.click(screen.getByText('Ｃ'));
 
       expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
       expect(screen.queryByText('7')).not.toBeInTheDocument();
@@ -379,9 +379,9 @@ describe('LP計算', () => {
     it('1Pが加算モード、2Pが減算モードの状態で2P側をキャンセルすると1Pは加算モードのままだが2Pはnormalモードになる', async () => {
       render(<LP />);
       await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('+')[0]);
+      await user.click(screen.getAllByText('＋')[0]);
       await user.click(screen.getAllByText('1')[0]);
-      await user.click(screen.getAllByText('-')[1]);
+      await user.click(screen.getAllByText('−')[1]);
       await user.click(screen.getAllByText('2')[1]);
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000+1');
@@ -389,7 +389,7 @@ describe('LP計算', () => {
       expect(screen.queryByText('-100')).not.toBeInTheDocument();
       expect(screen.getAllByText('7')).toHaveLength(2);
 
-      await user.click(screen.getAllByText('C')[1]);
+      await user.click(screen.getAllByText('Ｃ')[1]);
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000+1');
       expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
@@ -399,13 +399,13 @@ describe('LP計算', () => {
     it('加算モードでLP入力中にキャンセルし加算モードに戻ると入力したLPはクリアされる', async () => {
       render(<LP />);
       await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('+')[0]);
+      await user.click(screen.getAllByText('＋')[0]);
       await user.click(screen.getByText('1'));
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000+1');
 
-      await user.click(screen.getByText('C'));
-      await user.click(screen.getAllByText('+')[0]);
+      await user.click(screen.getByText('Ｃ'));
+      await user.click(screen.getAllByText('＋')[0]);
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
     });
@@ -418,7 +418,7 @@ describe('LP計算', () => {
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
       expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
 
-      await user.click(screen.getAllByText('1/2')[0]);
+      await user.click(screen.getAllByText('÷2')[0]);
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('4000');
       expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
@@ -430,7 +430,7 @@ describe('LP計算', () => {
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
       expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
 
-      await user.click(screen.getAllByText('1/2')[1]);
+      await user.click(screen.getAllByText('÷2')[1]);
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
       expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('4000');
@@ -438,20 +438,20 @@ describe('LP計算', () => {
     it('LPが奇数の状態でLPを半分にするとLPは切り上げられる', async () => {
       render(<LP />);
       await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('-')[0]);
+      await user.click(screen.getAllByText('−')[0]);
       await user.click(screen.getByText('1'));
       await user.click(screen.getByText('='));
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('7999');
 
-      await user.click(screen.getAllByText('1/2')[0]);
+      await user.click(screen.getAllByText('÷2')[0]);
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('4000');
     });
     it('LPが1の状態でLPを半分にしてもLPは1のまま', async () => {
       render(<LP />);
       await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('-')[0]);
+      await user.click(screen.getAllByText('−')[0]);
       await user.click(screen.getByText('7'));
       await user.click(screen.getByText('9'));
       await user.click(screen.getByText('9'));
@@ -460,7 +460,7 @@ describe('LP計算', () => {
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('1');
 
-      await user.click(screen.getAllByText('1/2')[0]);
+      await user.click(screen.getAllByText('÷2')[0]);
 
       expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('1');
     });
@@ -508,7 +508,7 @@ describe('ログ', () => {
     expect(screen.queryByTestId('modal-log')).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText('Close'));
-    await user.click(screen.getAllByText('+')[1]);
+    await user.click(screen.getAllByText('＋')[1]);
     await user.click(screen.getByText('1'));
     await user.click(screen.getByText('='));
     await user.click(screen.getByText('ログ'));
@@ -535,7 +535,7 @@ describe('ログ', () => {
 
     await user.click(screen.getByLabelText('Close'));
     await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('+')[1]);
+    await user.click(screen.getAllByText('＋')[1]);
     await user.click(screen.getByText('1'));
     await user.click(screen.getByText('='));
     await user.click(screen.getByText('ログ'));
@@ -568,7 +568,7 @@ describe('ログ', () => {
     expect(screen.queryByTestId('modal-log')).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText('Close'));
-    await user.click(screen.getAllByText('1/2')[0]);
+    await user.click(screen.getAllByText('÷2')[0]);
     await user.click(screen.getByText('ログ'));
 
     expect(screen.getByTestId('modal-log')).toHaveTextContent('旋風BF (1P)');
