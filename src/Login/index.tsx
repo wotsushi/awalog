@@ -1,10 +1,18 @@
 import { useState } from 'react';
 import { Alert, Button, Form } from 'react-bootstrap';
+import styled from 'styled-components';
 
 import AWANav from 'AWANav';
 import { useLogin, useUser } from 'lib/firebase';
 
-import './style.scss';
+const LoginForm = styled(Form)`
+  width: 400px;
+  height: 200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -20,7 +28,7 @@ const Login = () => {
           メールアドレスまたはパスワードが正しくありません
         </Alert>
       )}
-      <Form className="login-form">
+      <LoginForm>
         <Form.Group controlId="formBasicEmail">
           <Form.Label>メールアドレス</Form.Label>
           <Form.Control
@@ -40,7 +48,7 @@ const Login = () => {
         <Button variant="primary" onClick={() => login(email, password)}>
           ログイン
         </Button>
-      </Form>
+      </LoginForm>
     </>
   );
 };

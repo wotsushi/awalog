@@ -1,9 +1,13 @@
-import classNames from 'classnames';
 import Nav from 'react-bootstrap/Nav';
+import styled from 'styled-components';
 
 import { Deck } from 'lib/result';
 
 import { summaryDeck } from './Summary';
+
+const Root = styled(Nav)`
+  width: 324px;
+`;
 
 type Props = {
   decks: Deck[];
@@ -14,16 +18,17 @@ type Props = {
 const Sidebar = (props: Props) => {
   const { decks, selectedDeck, setDeck } = props;
   return (
-    <Nav
+    <Root
       variant="pills"
-      className={classNames('flex-column', 'sidebar')}
-      onSelect={(eventKey) => {
+      className="flex-column"
+      onSelect={(eventKey: string) => {
         if (eventKey) {
           setDeck(
             decks.find((deck) => String(deck.id) === eventKey) ?? summaryDeck
           );
         }
       }}
+      data-testid="sidebar"
     >
       <Nav.Item>
         <Nav.Link
@@ -40,7 +45,7 @@ const Sidebar = (props: Props) => {
           </Nav.Link>
         </Nav.Item>
       ))}
-    </Nav>
+    </Root>
   );
 };
 

@@ -1,73 +1,22 @@
-import { Button } from 'react-bootstrap';
+import React from 'react';
+import { Button as OriginalButton } from 'react-bootstrap';
 import { FcCheckmark, FcHighPriority } from 'react-icons/fc';
+import styled from 'styled-components';
 
 import { LPHistory } from './Game';
-import './style.scss';
 
-const Reset = (props: { onClick: () => void }) => {
-  return (
-    <Button variant="outline-secondary" onClick={props.onClick}>
-      リセット
-    </Button>
-  );
-};
+const Root = styled.div`
+  width: 65%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
 
-const LO = (props: { disabled: boolean; onClick: () => void }) => {
-  return (
-    <Button
-      variant="outline-secondary"
-      onClick={props.onClick}
-      disabled={props.disabled}
-      data-testid="lo-button"
-    >
-      デッキ切れ
-    </Button>
-  );
-};
-
-const Coin = (props: { onClick: () => void }) => {
-  return (
-    <Button variant="outline-secondary" onClick={props.onClick}>
-      コイン
-    </Button>
-  );
-};
-
-const Dice = (props: { onClick: () => void }) => {
-  return (
-    <Button variant="outline-secondary" onClick={props.onClick}>
-      サイコロ
-    </Button>
-  );
-};
-
-const Undo = (props: { lpHistory: LPHistory; undo: () => void }) => (
-  <Button
-    variant="outline-secondary"
-    onClick={props.undo}
-    disabled={props.lpHistory.head < 0}
-    data-testid="undo"
-  >
-    戻る
-  </Button>
-);
-
-const Redo = (props: { lpHistory: LPHistory; redo: () => void }) => (
-  <Button
-    variant="outline-secondary"
-    onClick={props.redo}
-    disabled={props.lpHistory.head === props.lpHistory.logs.length - 1}
-    data-testid="redo"
-  >
-    進む
-  </Button>
-);
-
-const LPLog = (props: Pick<Props, 'showLPHistoryModal'>) => (
-  <Button variant="outline-secondary" onClick={props.showLPHistoryModal}>
-    ログ
-  </Button>
-);
+const GameStatus = styled.div`
+  display: flex;
+  align-items: center;
+  width: 16px;
+`;
 
 type Props = {
   showResetModal: () => void;
@@ -82,38 +31,48 @@ type Props = {
   redo: () => void;
 };
 
-const Toolbar = (props: Props) => {
-  const {
-    showResetModal,
-    showLPHistoryModal,
-    showCoinModal,
-    showDiceModal,
-    disabled,
-    lpHistory,
-    succeedSave,
-    lo,
-    undo,
-    redo,
-  } = props;
+const Button = (
+  props: Omit<React.ComponentProps<typeof OriginalButton>, 'variant'>
+) => (
+  <OriginalButton variant="outline-secondary" {...props}>
+    {props.children}
+  </OriginalButton>
+);
+
+const Toolbar = ({
+  showResetModal,
+  showLPHistoryModal,
+  showCoinModal,
+  showDiceModal,
+  disabled,
+  lpHistory,
+  succeedSave,
+  lo,
+  undo,
+  redo,
+}: Props) => {
+  const disabledUndo = lpHistory.head < 0;
+  const disabledRedo = lpHistory.head === lpHistory.logs.length - 1;
   return (
-    <div className="toolbar">
-      <Reset onClick={showResetModal} />
-      <div className="game-status">
-        {succeedSave === undefined ? (
-          ''
-        ) : succeedSave ? (
-          <FcCheckmark />
-        ) : (
-          <FcHighPriority />
-        )}
-      </div>
-      <LO disabled={disabled} onClick={lo} />
-      <Coin onClick={showCoinModal} />
-      <Dice onClick={showDiceModal} />
-      <Undo lpHistory={lpHistory} undo={undo} />
-      <Redo lpHistory={lpHistory} redo={redo} />
-      <LPLog showLPHistoryModal={showLPHistoryModal} />
-    </div>
+    <Root>
+      <Button onClick={showResetModal}>リセット</Button>
+      <GameStatus>
+        {succeedSave === true && <FcCheckmark />}
+        {succeedSave === false && <FcHighPriority />}
+      </GameStatus>
+      <Button onClick={lo} disabled={disabled}>
+        デッキ切れ
+      </Button>
+      <Button onClick={showCoinModal}>コイン</Button>
+      <Button onClick={showDiceModal}>サイコロ</Button>
+      <Button onClick={undo} disabled={disabledUndo}>
+        戻る
+      </Button>
+      <Button onClick={redo} disabled={disabledRedo}>
+        進む
+      </Button>
+      <Button onClick={showLPHistoryModal}>ログ</Button>
+    </Root>
   );
 };
 

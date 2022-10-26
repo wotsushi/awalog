@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react';
 import { Button as OriginalButton, Col, Container, Row } from 'react-bootstrap';
+import styled from 'styled-components';
 
 import { Mode } from './Game';
-import './style.scss';
 
 const quickButtons = [
   [-100, -200, -300],
@@ -18,6 +18,11 @@ const manualButtons = [
   ['0', '00', '='],
 ];
 
+const StyledOriginalButton = styled(OriginalButton)`
+  width: 100px;
+  height: 60px;
+`;
+
 type ButtonProps = {
   onClick: () => void;
   disabled: boolean;
@@ -25,16 +30,19 @@ type ButtonProps = {
 };
 
 const Button = ({ onClick, disabled, children }: ButtonProps) => (
-  <OriginalButton
+  <StyledOriginalButton
     variant="outline-secondary"
-    className="button"
     style={{ fontSize: '26px' }}
     onClick={onClick}
     disabled={disabled}
   >
     {children}
-  </OriginalButton>
+  </StyledOriginalButton>
 );
+
+const ButtonRow = styled(Row)`
+  padding: 15px;
+`;
 
 type Props = {
   addLP: (lp: number) => void;
@@ -49,7 +57,7 @@ const Normal = (props: Props) => (
   <Container>
     {quickButtons.map((row, i) => {
       return (
-        <Row className="button-row" key={i}>
+        <ButtonRow key={i}>
           {row.map((val, j) => {
             return (
               <Col key={j}>
@@ -62,10 +70,10 @@ const Normal = (props: Props) => (
               </Col>
             );
           })}
-        </Row>
+        </ButtonRow>
       );
     })}
-    <Row className="button-row">
+    <ButtonRow>
       <Col>
         <Button onClick={() => props.changeMode('+')} disabled={props.disabled}>
           ＋
@@ -81,7 +89,7 @@ const Normal = (props: Props) => (
           ÷2
         </Button>
       </Col>
-    </Row>
+    </ButtonRow>
   </Container>
 );
 
@@ -89,7 +97,7 @@ const Manual = (props: Props) => (
   <Container>
     {manualButtons.map((row, i) => {
       return (
-        <Row className="button-row" key={i}>
+        <ButtonRow key={i}>
           {row.map((val, j) => {
             return (
               <Col key={j}>
@@ -102,10 +110,10 @@ const Manual = (props: Props) => (
               </Col>
             );
           })}
-        </Row>
+        </ButtonRow>
       );
     })}
-    <Row className="button-row">
+    <ButtonRow>
       <Col>
         <Button onClick={() => props.changeMode('+')} disabled={props.disabled}>
           ＋
@@ -126,7 +134,7 @@ const Manual = (props: Props) => (
           Ｃ
         </Button>
       </Col>
-    </Row>
+    </ButtonRow>
   </Container>
 );
 

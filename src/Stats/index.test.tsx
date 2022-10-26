@@ -58,13 +58,14 @@ const Stats = ({
 };
 
 const user = userEvent.setup();
-const content = () => within(screen.getByTestId('content'));
 
 describe('サイドメニュー', () => {
   it('デッキリストが空でも項目サマリーは表示される', async () => {
     render(<Stats decks={[]} />);
 
-    expect(content().getByRole('button')).toHaveTextContent('サマリー');
+    expect(
+      within(screen.getByTestId('sidebar')).getByText('サマリー')
+    ).toBeInTheDocument();
   });
   it('デッキリストが[旋風BF, 代行天使]のときサイドメニューには[サマリー、旋風BF、代行天使]の順で項目が表示される', async () => {
     render(
@@ -76,7 +77,7 @@ describe('サイドメニュー', () => {
       />
     );
 
-    const items = content().getAllByRole('button');
+    const items = within(screen.getByTestId('sidebar')).getAllByRole('button');
     expect(items).toHaveLength(3);
     expect(items[0]).toHaveTextContent('サマリー');
     expect(items[1]).toHaveTextContent('旋風BF');

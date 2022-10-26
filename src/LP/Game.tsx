@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { Button, Modal, ListGroup } from 'react-bootstrap';
+import styled from 'styled-components';
 
 import { Deck, Duel, findWinner, Result } from 'lib/result';
 
@@ -224,6 +225,20 @@ const useSaveModal = (save: () => void) => {
   };
 };
 
+const ModalLog = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const ModalPlayerName = styled.div`
+  color: gray;
+`;
+
+const ModalLogLP = styled.div`
+  min-width: 160px;
+`;
+
 const useHistoryModal = (lpHistory: LPHistory, decks: [Deck, Deck]) => {
   const [showModal, setShowModal] = useState(false);
   const close = () => setShowModal(false);
@@ -236,14 +251,14 @@ const useHistoryModal = (lpHistory: LPHistory, decks: [Deck, Deck]) => {
           key={i}
           data-testid="modal-log"
         >
-          <div className="modal-log">
-            <div className="modal-player-name">
+          <ModalLog>
+            <ModalPlayerName>
               {decks[playerID - 1].name} ({playerID}P)
-            </div>
-            <div className="modal-log-lp">
+            </ModalPlayerName>
+            <ModalLogLP>
               {from} → {to} ({toStringWithSign(to - from)})
-            </div>
-          </div>
+            </ModalLogLP>
+          </ModalLog>
         </ListGroup.Item>
       );
     });

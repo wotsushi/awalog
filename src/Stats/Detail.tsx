@@ -7,6 +7,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import styled from 'styled-components';
 
 import { Deck, findWinner, Result } from 'lib/result';
 
@@ -21,6 +22,10 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
+const Root = styled.div`
+  width: 700px;
+`;
 
 type Props = {
   results: Result[];
@@ -69,7 +74,7 @@ const Detail = (props: Props) => {
   const lose = Object.values(summary).map(({ lose }) => lose);
   const draw = Object.values(summary).map(({ draw }) => draw);
   return (
-    <div className="main">
+    <Root>
       <WPChart
         title={`${targetDeck.name}の各デッキに対する勝率`}
         deckNames={deckNames}
@@ -82,7 +87,7 @@ const Detail = (props: Props) => {
         lose={lose}
         draw={draw}
       />
-    </div>
+    </Root>
   );
 };
 

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { User } from 'firebase/auth';
 import React from 'react';
@@ -35,26 +35,28 @@ const LP = ({
 };
 
 const user = userEvent.setup();
+const side1p = () => within(screen.getByTestId('side-1p'));
+const side2p = () => within(screen.getByTestId('side-2p'));
 
 describe('初期状態', () => {
   it('初期状態ではデッキ切れ、undo/redoボタンは非活性化状態である', () => {
     render(<LP />);
 
-    expect(screen.getByTestId('lo-button')).toBeDisabled();
-    expect(screen.getByTestId('undo')).toBeDisabled();
-    expect(screen.getByTestId('redo')).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'デッキ切れ' })).toBeDisabled();
+    expect(screen.getByText('戻る')).toBeDisabled();
+    expect(screen.getByText('進む')).toBeDisabled();
   });
   it('初期状態の選択中デッキはデッキ一覧の先頭である', () => {
     render(<LP />);
 
-    expect(screen.getByTestId('window-deck-1p')).toHaveDisplayValue('旋風BF');
-    expect(screen.getByTestId('window-deck-2p')).toHaveDisplayValue('旋風BF');
+    expect(side1p().getByRole('combobox')).toHaveDisplayValue('旋風BF');
+    expect(side2p().getByRole('combobox')).toHaveDisplayValue('旋風BF');
   });
   it('初期状態のLPは8000である', () => {
     render(<LP />);
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-    expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+    expect(side1p().getByText('8000')).toBeInTheDocument();
+    expect(side2p().getByText('8000')).toBeInTheDocument();
   });
   it('初期状態のログは空である', async () => {
     render(<LP />);
@@ -66,13 +68,22 @@ describe('初期状態', () => {
   it('初期状態ではお互い後攻である', () => {
     render(<LP />);
 
-    expect(screen.getByTestId('window-first-1p')).toHaveTextContent('後攻');
-    expect(screen.getByTestId('window-first-2p')).toHaveTextContent('後攻');
+    expect(side1p().getByText('後攻')).toBeInTheDocument();
+    expect(side2p().getByText('後攻')).toBeInTheDocument();
   });
   it('初期状態ではライフ計算ボタンは非活性化状態である', () => {
     render(<LP />);
 
-    expect(screen.getAllByText('-1000')[0]).toBeDisabled();
+    side1p()
+      .getAllByRole('button')
+      .forEach((button) => {
+        expect(button).toBeDisabled();
+      });
+    side2p()
+      .getAllByRole('button')
+      .forEach((button) => {
+        expect(button).toBeDisabled();
+      });
   });
 });
 
@@ -80,43 +91,47 @@ describe('先攻後攻選択', () => {
   it('初期状態で1Pの先行後攻スイッチをクリックすると1Pは先攻となり2Pは後攻のまま', async () => {
     render(<LP />);
 
-    expect(screen.getByTestId('window-first-1p')).toHaveTextContent('後攻');
-    expect(screen.getByTestId('window-first-2p')).toHaveTextContent('後攻');
+    expect(side1p().getByText('後攻')).toBeInTheDocument();
+    expect(side2p().getByText('後攻')).toBeInTheDocument();
 
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-    expect(screen.getByTestId('window-first-1p')).toHaveTextContent('先攻');
-    expect(screen.getByTestId('window-first-2p')).toHaveTextContent('後攻');
+    expect(side1p().getByText('先攻')).toBeInTheDocument();
+    expect(side2p().getByText('後攻')).toBeInTheDocument();
   });
   it('初期状態で2Pの先行後攻スイッチをクリックすると2Pは先攻となり1Pは後攻のまま', async () => {
     render(<LP />);
 
-    expect(screen.getByTestId('window-first-1p')).toHaveTextContent('後攻');
-    expect(screen.getByTestId('window-first-2p')).toHaveTextContent('後攻');
+    expect(side1p().getByText('後攻')).toBeInTheDocument();
+    expect(side2p().getByText('後攻')).toBeInTheDocument();
 
-    await user.click(screen.getByTestId('window-first-switch-2p'));
+    await user.click(side2p().getByRole('checkbox', { name: 'switch' }));
 
-    expect(screen.getByTestId('window-first-1p')).toHaveTextContent('後攻');
-    expect(screen.getByTestId('window-first-2p')).toHaveTextContent('先攻');
+    expect(side1p().getByText('後攻')).toBeInTheDocument();
+    expect(side2p().getByText('先攻')).toBeInTheDocument();
   });
   it('1Pが先攻の状態で1Pの先攻後攻スイッチをクリックすると1Pは後攻になる', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-    expect(screen.getByTestId('window-first-1p')).toHaveTextContent('先攻');
+    expect(side1p().getByText('先攻')).toBeInTheDocument();
 
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-    expect(screen.getByTestId('window-first-1p')).toHaveTextContent('後攻');
+    expect(side1p().getByText('後攻')).toBeInTheDocument();
   });
   it('初期状態で1Pの先攻後攻スイッチをクリックするとライフ計算ボタンは活性化状態になる', async () => {
     render(<LP />);
 
-    expect(screen.getAllByText('-1000')[0]).toBeDisabled();
+    side1p()
+      .getAllByRole('button')
+      .forEach((button) => expect(button).toBeDisabled());
 
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-    expect(screen.getAllByText('-1000')[0]).toBeEnabled();
+    side1p()
+      .getAllByRole('button')
+      .forEach((button) => expect(button).toBeEnabled());
   });
 });
 
@@ -124,345 +139,358 @@ describe('LP計算', () => {
   describe('クイックLP減算', () => {
     it('お互いのLPが8000の状態で1PのLPを-1000すると1PのLPが7000になる。2PのLPは8000のまま', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('-1000')[0]);
+      await user.click(side1p().getByText('-1000'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('7000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('7000')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
     });
     it('お互いのLPが8000の状態で2PのLPを-2000すると1PのLPは8000のままだが2PのLPは6000になる', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('-2000')[1]);
+      await user.click(side2p().getByText('-2000'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('6000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('6000')).toBeInTheDocument();
     });
     it('1PのLPが2000の状態で1PのLPを-3000すると1PのLPは0になる（マイナスにはならない）', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('-3000')[0]);
-      await user.click(screen.getAllByText('-3000')[0]);
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+      await user.click(side1p().getByText('-3000'));
+      await user.click(side1p().getByText('-3000'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('2000');
+      expect(side1p().getByText('2000')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('-3000')[0]);
+      await user.click(side1p().getByText('-3000'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('0');
+      expect(side1p().getByText('0')).toBeInTheDocument();
     });
   });
   describe('LP加算', () => {
     it('お互いがnormalモードで1Pの+キーを押すと1P側はテンキー配置になる。2Pはそのまま', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-      expect(screen.getAllByText('-100')).toHaveLength(2);
-      expect(screen.queryByText('7')).not.toBeInTheDocument();
+      expect(side1p().getByText('-100')).toBeInTheDocument();
+      expect(side1p().queryByText('7')).not.toBeInTheDocument();
+      expect(side2p().getByText('-100')).toBeInTheDocument();
+      expect(side2p().queryByText('7')).not.toBeInTheDocument();
 
-      await user.click(screen.getAllByText('＋')[0]);
+      await user.click(side1p().getByText('＋'));
 
-      expect(screen.getByText('-100')).toBeInTheDocument();
-      expect(screen.getByText('7')).toBeInTheDocument();
+      expect(side1p().queryByText('-100')).not.toBeInTheDocument();
+      expect(side1p().getByText('7')).toBeInTheDocument();
+      expect(side2p().getByText('-100')).toBeInTheDocument();
+      expect(side2p().queryByText('7')).not.toBeInTheDocument();
     });
     it('LPが8000の状態で+1234を入力するとLP欄に8000+1234が表示される', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('＋')[0]);
-      await user.click(screen.getByText('1'));
-      await user.click(screen.getByText('2'));
-      await user.click(screen.getByText('3'));
-      await user.click(screen.getByText('4'));
+      await user.click(side1p().getByText('＋'));
+      await user.click(side1p().getByText('1'));
+      await user.click(side1p().getByText('2'));
+      await user.click(side1p().getByText('3'));
+      await user.click(side1p().getByText('4'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000+1234');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000+1234')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
     });
     it('お互いのLPが8000の状態で1PのLPを+1234すると1PのLPは9234になる。2Pは8000のまま', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('＋')[0]);
-      await user.click(screen.getByText('1'));
-      await user.click(screen.getByText('2'));
-      await user.click(screen.getByText('3'));
-      await user.click(screen.getByText('4'));
-      await user.click(screen.getByText('='));
+      await user.click(side1p().getByText('＋'));
+      await user.click(side1p().getByText('1'));
+      await user.click(side1p().getByText('2'));
+      await user.click(side1p().getByText('3'));
+      await user.click(side1p().getByText('4'));
+      await user.click(side1p().getByText('='));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('9234');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('9234')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
     });
     it('LP加算後はnormalモードに戻る', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('＋')[0]);
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+      await user.click(side1p().getByText('＋'));
 
-      expect(screen.getByText('-100')).toBeInTheDocument();
-      expect(screen.getByText('7')).toBeInTheDocument();
+      expect(side1p().queryByText('-100')).not.toBeInTheDocument();
+      expect(side1p().getByText('7')).toBeInTheDocument();
 
-      await user.click(screen.getByText('1'));
-      await user.click(screen.getByText('='));
+      await user.click(side1p().getByText('1'));
+      await user.click(side1p().getByText('='));
 
-      expect(screen.getAllByText('-100')).toHaveLength(2);
-      expect(screen.queryByText('7')).not.toBeInTheDocument();
+      expect(side1p().getByText('-100')).toBeInTheDocument();
+      expect(side1p().queryByText('7')).not.toBeInTheDocument();
     });
     it('お互いのLPが8000の状態で2PのLPを+9000すると1PのLPは8000のままだが2PのLPは17000になる', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('＋')[1]);
-      await user.click(screen.getByText('9'));
-      await user.click(screen.getByText('0'));
-      await user.click(screen.getByText('00'));
-      await user.click(screen.getByText('='));
+      await user.click(side2p().getByText('＋'));
+      await user.click(side2p().getByText('9'));
+      await user.click(side2p().getByText('0'));
+      await user.click(side2p().getByText('00'));
+      await user.click(side2p().getByText('='));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('17000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('17000')).toBeInTheDocument();
     });
 
     it('LPが8000の状態で+100000すると1PのLPは108000になる（LPに上限はない）', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('＋')[0]);
-      await user.click(screen.getByText('1'));
-      await user.click(screen.getByText('00'));
-      await user.click(screen.getByText('00'));
-      await user.click(screen.getByText('0'));
-      await user.click(screen.getByText('='));
+      await user.click(side1p().getByText('＋'));
+      await user.click(side1p().getByText('1'));
+      await user.click(side1p().getByText('00'));
+      await user.click(side1p().getByText('00'));
+      await user.click(side1p().getByText('0'));
+      await user.click(side1p().getByText('='));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('108000');
+      expect(side1p().getByText('108000')).toBeInTheDocument();
     });
   });
   describe('LP減算', () => {
     it('お互いがnormalモードで1Pの-キーを押すと1P側はテンキー配置になる。2Pはそのまま', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-      expect(screen.getAllByText('-100')).toHaveLength(2);
-      expect(screen.queryByText('7')).not.toBeInTheDocument();
+      expect(side1p().getByText('-100')).toBeInTheDocument();
+      expect(side1p().queryByText('7')).not.toBeInTheDocument();
+      expect(side2p().getByText('-100')).toBeInTheDocument();
+      expect(side2p().queryByText('7')).not.toBeInTheDocument();
 
-      await user.click(screen.getAllByText('＋')[0]);
+      await user.click(screen.getAllByText('−')[0]);
 
-      expect(screen.getByText('-100')).toBeInTheDocument();
-      expect(screen.getByText('7')).toBeInTheDocument();
+      expect(side1p().queryByText('-100')).not.toBeInTheDocument();
+      expect(side1p().getByText('7')).toBeInTheDocument();
+      expect(side2p().getByText('-100')).toBeInTheDocument();
+      expect(side2p().queryByText('7')).not.toBeInTheDocument();
     });
     it('LPが8000の状態で-1234を入力するとLP欄に8000-1234が表示される', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('−')[0]);
-      await user.click(screen.getByText('1'));
-      await user.click(screen.getByText('2'));
-      await user.click(screen.getByText('3'));
-      await user.click(screen.getByText('4'));
+      await user.click(side1p().getByText('−'));
+      await user.click(side1p().getByText('1'));
+      await user.click(side1p().getByText('2'));
+      await user.click(side1p().getByText('3'));
+      await user.click(side1p().getByText('4'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000-1234');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000-1234')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
     });
     it('お互いのLPが8000の状態で1PのLPを-1234すると1PのLPは6766になる。2Pは8000のまま', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('−')[0]);
-      await user.click(screen.getByText('1'));
-      await user.click(screen.getByText('2'));
-      await user.click(screen.getByText('3'));
-      await user.click(screen.getByText('4'));
-      await user.click(screen.getByText('='));
+      await user.click(side1p().getByText('−'));
+      await user.click(side1p().getByText('1'));
+      await user.click(side1p().getByText('2'));
+      await user.click(side1p().getByText('3'));
+      await user.click(side1p().getByText('4'));
+      await user.click(side1p().getByText('='));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('6766');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('6766')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
     });
     it('LP減算後はnormalモードに戻る', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('−')[0]);
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+      await user.click(side1p().getByText('−'));
 
-      expect(screen.getByText('-100')).toBeInTheDocument();
-      expect(screen.getByText('7')).toBeInTheDocument();
+      expect(side1p().queryByText('-100')).not.toBeInTheDocument();
+      expect(side1p().getByText('7')).toBeInTheDocument();
 
-      await user.click(screen.getByText('1'));
-      await user.click(screen.getByText('='));
+      await user.click(side1p().getByText('1'));
+      await user.click(side1p().getByText('='));
 
-      expect(screen.getAllByText('-100')).toHaveLength(2);
-      expect(screen.queryByText('7')).not.toBeInTheDocument();
+      expect(side1p().getByText('-100')).toBeInTheDocument();
+      expect(side1p().queryByText('7')).not.toBeInTheDocument();
     });
     it('お互いのLPが8000の状態で2PのLPを-1すると1PのLPは8000のままだが2PのLPは7999になる', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('−')[1]);
-      await user.click(screen.getByText('1'));
-      await user.click(screen.getByText('='));
+      await user.click(side2p().getByText('−'));
+      await user.click(side2p().getByText('1'));
+      await user.click(side2p().getByText('='));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('7999');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('7999')).toBeInTheDocument();
     });
     it('LPが1233の状態でLPを-1234するとLPは0になる（マイナスにはならない）', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('−')[0]);
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+      await user.click(side1p().getByText('−'));
       await user.click(screen.getByText('6'));
       await user.click(screen.getByText('7'));
       await user.click(screen.getByText('6'));
       await user.click(screen.getByText('7'));
-      await user.click(screen.getByText('='));
+      await user.click(side1p().getByText('='));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('1233');
+      expect(side1p().getByText('1233')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('−')[0]);
+      await user.click(side1p().getByText('−'));
       await user.click(screen.getByText('1'));
       await user.click(screen.getByText('2'));
       await user.click(screen.getByText('3'));
       await user.click(screen.getByText('4'));
       await user.click(screen.getByText('='));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('0');
+      expect(side1p().getByText('0')).toBeInTheDocument();
     });
   });
   describe('加減算モードのキャンセル', () => {
     it('加算モードでキャンセルするとnormalモードになる', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('＋')[0]);
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+      await user.click(side1p().getByText('＋'));
 
-      expect(screen.getByText('7')).toBeInTheDocument();
-      expect(screen.getByText('-100')).toBeInTheDocument();
+      expect(side1p().queryByText('-100')).not.toBeInTheDocument();
+      expect(side1p().getByText('7')).toBeInTheDocument();
 
-      await user.click(screen.getByText('Ｃ'));
+      await user.click(side1p().getByText('Ｃ'));
 
-      expect(screen.queryByText('7')).not.toBeInTheDocument();
-      expect(screen.getAllByText('-100')).toHaveLength(2);
+      expect(side1p().getByText('-100')).toBeInTheDocument();
+      expect(side1p().queryByText('7')).not.toBeInTheDocument();
     });
     it('減算モードでLP入力中にキャンセルするとnormalモードになり入力していたLPもクリアされる', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('−')[1]);
-      await user.click(screen.getByText('1'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+      await user.click(side2p().getByText('−'));
+      await user.click(side2p().getByText('1'));
 
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000-1');
-      expect(screen.getByText('7')).toBeInTheDocument();
-      expect(screen.getAllByText('-100')).toHaveLength(1);
+      expect(side2p().getByText('8000-1')).toBeInTheDocument();
+      expect(side2p().queryByText('-100')).not.toBeInTheDocument();
+      expect(side2p().getByText('7')).toBeInTheDocument();
 
-      await user.click(screen.getByText('Ｃ'));
+      await user.click(side2p().getByText('Ｃ'));
 
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
-      expect(screen.queryByText('7')).not.toBeInTheDocument();
-      expect(screen.getAllByText('-100')).toHaveLength(2);
+      expect(side2p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('-100')).toBeInTheDocument();
+      expect(side2p().queryByText('7')).not.toBeInTheDocument();
     });
     it('1Pが加算モード、2Pが減算モードの状態で2P側をキャンセルすると1Pは加算モードのままだが2Pはnormalモードになる', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('＋')[0]);
-      await user.click(screen.getAllByText('1')[0]);
-      await user.click(screen.getAllByText('−')[1]);
-      await user.click(screen.getAllByText('2')[1]);
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+      await user.click(side1p().getByText('＋'));
+      await user.click(side1p().getByText('1'));
+      await user.click(side2p().getByText('−'));
+      await user.click(side2p().getByText('2'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000+1');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000-2');
-      expect(screen.queryByText('-100')).not.toBeInTheDocument();
-      expect(screen.getAllByText('7')).toHaveLength(2);
+      expect(side1p().getByText('8000+1')).toBeInTheDocument();
+      expect(side1p().queryByText('-100')).not.toBeInTheDocument();
+      expect(side1p().getByText('7')).toBeInTheDocument();
+      expect(side2p().getByText('8000-2')).toBeInTheDocument();
+      expect(side2p().queryByText('-100')).not.toBeInTheDocument();
+      expect(side2p().getByText('7')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('Ｃ')[1]);
+      await user.click(side2p().getByText('Ｃ'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000+1');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
-      expect(screen.getByText('7')).toBeInTheDocument();
-      expect(screen.getByText('-100')).toBeInTheDocument();
+      expect(side1p().getByText('8000+1')).toBeInTheDocument();
+      expect(side1p().queryByText('-100')).not.toBeInTheDocument();
+      expect(side1p().getByText('7')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('-100')).toBeInTheDocument();
+      expect(side2p().queryByText('7')).not.toBeInTheDocument();
     });
     it('加算モードでLP入力中にキャンセルし加算モードに戻ると入力したLPはクリアされる', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('＋')[0]);
-      await user.click(screen.getByText('1'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+      await user.click(side1p().getByText('＋'));
+      await user.click(side1p().getByText('1'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000+1');
+      expect(side1p().getByText('8000+1')).toBeInTheDocument();
 
-      await user.click(screen.getByText('Ｃ'));
-      await user.click(screen.getAllByText('＋')[0]);
+      await user.click(side1p().getByText('Ｃ'));
+      await user.click(side1p().getByText('＋'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
     });
   });
   describe('LP半分', () => {
     it('お互いのLPが8000の状態で1PのLPを半分にすると1PのLPは4000になる。2PのLPは8000のまま', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('÷2')[0]);
+      await user.click(side1p().getByText('÷2'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('4000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('4000')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
     });
     it('お互いのLPが8000の状態で2PのLPを半分にすると1PのLPは8000のままだが2PのLPは4000になる', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('8000')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('÷2')[1]);
+      await user.click(side2p().getByText('÷2'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-      expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('4000');
+      expect(side1p().getByText('8000')).toBeInTheDocument();
+      expect(side2p().getByText('4000')).toBeInTheDocument();
     });
     it('LPが奇数の状態でLPを半分にするとLPは切り上げられる', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('−')[0]);
-      await user.click(screen.getByText('1'));
-      await user.click(screen.getByText('='));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+      await user.click(side1p().getByText('−'));
+      await user.click(side1p().getByText('1'));
+      await user.click(side1p().getByText('='));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('7999');
+      expect(side1p().getByText('7999')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('÷2')[0]);
+      await user.click(side1p().getByText('÷2'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('4000');
+      expect(side1p().getByText('4000')).toBeInTheDocument();
     });
     it('LPが1の状態でLPを半分にしてもLPは1のまま', async () => {
       render(<LP />);
-      await user.click(screen.getByTestId('window-first-switch-1p'));
-      await user.click(screen.getAllByText('−')[0]);
-      await user.click(screen.getByText('7'));
-      await user.click(screen.getByText('9'));
-      await user.click(screen.getByText('9'));
-      await user.click(screen.getByText('9'));
-      await user.click(screen.getByText('='));
+      await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+      await user.click(side1p().getByText('−'));
+      await user.click(side1p().getByText('7'));
+      await user.click(side1p().getByText('9'));
+      await user.click(side1p().getByText('9'));
+      await user.click(side1p().getByText('9'));
+      await user.click(side1p().getByText('='));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('1');
+      expect(side1p().getByText('1')).toBeInTheDocument();
 
-      await user.click(screen.getAllByText('÷2')[0]);
+      await user.click(side1p().getByText('÷2'));
 
-      expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('1');
+      expect(side1p().getByText('1')).toBeInTheDocument();
     });
   });
 });
@@ -477,16 +505,18 @@ describe('ログ', () => {
         ]}
       />
     );
-    await user.selectOptions(screen.getByTestId('window-deck-2p'), '代行天使');
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.selectOptions(side2p().getByRole('combobox'), '代行天使');
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.queryByTestId('modal-log')).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText('Close'));
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByText('-1000'));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByTestId('modal-log')).toBeInTheDocument();
     expect(screen.getByTestId('modal-log')).toHaveTextContent('旋風BF (1P)');
     expect(screen.getByTestId('modal-log')).toHaveTextContent(
       '8000 → 7000 (-1000)'
@@ -501,18 +531,21 @@ describe('ログ', () => {
         ]}
       />
     );
-    await user.selectOptions(screen.getByTestId('window-deck-2p'), '代行天使');
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.selectOptions(side2p().getByRole('combobox'), '代行天使');
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.queryByTestId('modal-log')).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText('Close'));
-    await user.click(screen.getAllByText('＋')[1]);
-    await user.click(screen.getByText('1'));
-    await user.click(screen.getByText('='));
+    await user.click(side2p().getByText('＋'));
+    await user.click(side2p().getByText('1'));
+    await user.click(side2p().getByText('='));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
+    expect(screen.getByTestId('modal-log')).toBeInTheDocument();
     expect(screen.getByTestId('modal-log')).toHaveTextContent('代行天使 (2P)');
     expect(screen.getByTestId('modal-log')).toHaveTextContent(
       '8000 → 8001 (+1)'
@@ -527,19 +560,21 @@ describe('ログ', () => {
         ]}
       />
     );
-    await user.selectOptions(screen.getByTestId('window-deck-2p'), '代行天使');
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.selectOptions(side2p().getByRole('combobox'), '代行天使');
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.queryByTestId('modal-log')).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText('Close'));
-    await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('＋')[1]);
-    await user.click(screen.getByText('1'));
-    await user.click(screen.getByText('='));
+    await user.click(side1p().getByText('-1000'));
+    await user.click(side2p().getByText('＋'));
+    await user.click(side2p().getByText('1'));
+    await user.click(side2p().getByText('='));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.getAllByTestId('modal-log')[0]).toHaveTextContent(
       '代行天使 (2P)'
     );
@@ -562,15 +597,17 @@ describe('ログ', () => {
         ]}
       />
     );
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.queryByTestId('modal-log')).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText('Close'));
-    await user.click(screen.getAllByText('÷2')[0]);
+    await user.click(side1p().getByText('÷2'));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.getByTestId('modal-log')).toHaveTextContent('旋風BF (1P)');
     expect(screen.getByTestId('modal-log')).toHaveTextContent(
       '8000 → 4000 (-4000)'
@@ -585,19 +622,20 @@ describe('ログ', () => {
         ]}
       />
     );
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-100')[0]);
-    await user.click(screen.getAllByText('-200')[0]);
-    await user.click(screen.getAllByText('-300')[0]);
-    await user.click(screen.getAllByText('-400')[0]);
-    await user.click(screen.getAllByText('-500')[0]);
-    await user.click(screen.getAllByText('-600')[0]);
-    await user.click(screen.getAllByText('-700')[0]);
-    await user.click(screen.getAllByText('-800')[0]);
-    await user.click(screen.getAllByText('-900')[0]);
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getAllByText('-100')[0]);
+    await user.click(side1p().getAllByText('-200')[0]);
+    await user.click(side1p().getAllByText('-300')[0]);
+    await user.click(side1p().getAllByText('-400')[0]);
+    await user.click(side1p().getAllByText('-500')[0]);
+    await user.click(side1p().getAllByText('-600')[0]);
+    await user.click(side1p().getAllByText('-700')[0]);
+    await user.click(side1p().getAllByText('-800')[0]);
+    await user.click(side1p().getAllByText('-900')[0]);
+    await user.click(side1p().getAllByText('-1000')[0]);
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.getAllByTestId('modal-log')).toHaveLength(10);
     expect(screen.getAllByTestId('modal-log')[9]).toHaveTextContent(
       '旋風BF (1P)'
@@ -607,9 +645,10 @@ describe('ログ', () => {
     );
 
     await user.click(screen.getByLabelText('Close'));
-    await user.click(screen.getAllByText('-2000')[0]);
+    await user.click(side1p().getByText('-2000'));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.getAllByTestId('modal-log')).toHaveLength(10);
     expect(screen.getAllByTestId('modal-log')[9]).toHaveTextContent(
       '旋風BF (1P)'
@@ -627,19 +666,21 @@ describe('ログ', () => {
         ]}
       />
     );
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.getByTestId('modal-log')).toHaveTextContent('旋風BF (1P)');
     expect(screen.getByTestId('modal-log')).toHaveTextContent(
       '8000 → 7000 (-1000)'
     );
 
     await user.click(screen.getByLabelText('Close'));
-    await user.selectOptions(screen.getByTestId('window-deck-1p'), '代行天使');
+    await user.selectOptions(side1p().getByRole('combobox'), '代行天使');
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.getByTestId('modal-log')).toHaveTextContent('代行天使 (1P)');
     expect(screen.getByTestId('modal-log')).toHaveTextContent(
       '8000 → 7000 (-1000)'
@@ -654,14 +695,15 @@ describe('ログ', () => {
         ]}
       />
     );
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.queryByTestId('modal-log')).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText('Close'));
-    await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('-2000')[1]);
+    await user.click(side1p().getByText('-1000'));
+    await user.click(side2p().getByText('-2000'));
     await user.click(screen.getByText('ログ'));
 
     expect(screen.getAllByTestId('modal-log')[0]).toHaveClass(
@@ -683,18 +725,17 @@ describe('リセット', () => {
         ]}
       />
     );
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('-2000')[1]);
-
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('7000');
-    expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('6000');
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
+    await user.click(side2p().getByText('-2000'));
+    expect(side1p().getByText('7000')).toBeInTheDocument();
+    expect(side2p().getByText('6000')).toBeInTheDocument();
 
     await user.click(screen.getByText('リセット'));
     await user.click(screen.getByText('はい'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-    expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+    expect(side1p().getByText('8000')).toBeInTheDocument();
+    expect(side2p().getByText('8000')).toBeInTheDocument();
   });
   it('1PのLPが7000, 2PのLPが6000の状態でリセットをキャンセルすると1PのLPは7000, 2PのLPは6000のまま', async () => {
     render(
@@ -705,18 +746,18 @@ describe('リセット', () => {
         ]}
       />
     );
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('-2000')[1]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
+    await user.click(side2p().getByText('-2000'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('7000');
-    expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('6000');
+    expect(side1p().getByText('7000')).toBeInTheDocument();
+    expect(side2p().getByText('6000')).toBeInTheDocument();
 
     await user.click(screen.getByText('リセット'));
     await user.click(screen.getByText('いいえ'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('7000');
-    expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('6000');
+    expect(side1p().getByText('7000')).toBeInTheDocument();
+    expect(side2p().getByText('6000')).toBeInTheDocument();
   });
   it('1Pのデッキを旋風BF（初期状態）から代行天使に変更した状態でリセットしても1Pのデッキは旋風BFのまま', async () => {
     render(
@@ -727,15 +768,15 @@ describe('リセット', () => {
         ]}
       />
     );
-    await user.selectOptions(screen.getByTestId('window-deck-1p'), '代行天使');
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.selectOptions(side1p().getByRole('combobox'), '代行天使');
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-    expect(screen.getByTestId('window-deck-1p')).toHaveDisplayValue('代行天使');
+    expect(side1p().getByRole('combobox')).toHaveDisplayValue('代行天使');
 
     await user.click(screen.getByText('リセット'));
     await user.click(screen.getByText('はい'));
 
-    expect(screen.getByTestId('window-deck-1p')).toHaveDisplayValue('代行天使');
+    expect(side1p().getByRole('combobox')).toHaveDisplayValue('代行天使');
   });
   it('LP減算ログが記録されている状態でリセットするとログは空になる', async () => {
     render(
@@ -746,10 +787,11 @@ describe('リセット', () => {
         ]}
       />
     );
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.getByTestId('modal-log')).toHaveTextContent('旋風BF (1P)');
     expect(screen.getByTestId('modal-log')).toHaveTextContent(
       '8000 → 7000 (-1000)'
@@ -760,6 +802,7 @@ describe('リセット', () => {
     await user.click(screen.getByText('はい'));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.queryByTestId('modal-log')).not.toBeInTheDocument();
   });
   it('LP減算ログが記録されている状態でリセットをキャンセルするとLP減算ログは残ったまま', async () => {
@@ -771,10 +814,11 @@ describe('リセット', () => {
         ]}
       />
     );
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
     await user.click(screen.getByText('ログ'));
 
+    expect(screen.getByText('ライフポイント変動ログ')).toBeInTheDocument();
     expect(screen.getByTestId('modal-log')).toHaveTextContent('旋風BF (1P)');
     expect(screen.getByTestId('modal-log')).toHaveTextContent(
       '8000 → 7000 (-1000)'
@@ -796,66 +840,66 @@ describe('デッキ切れ', () => {
   it('先攻未選択の場合、デッキ切れをチェックをしてもデッキ切れボタンは非活性', async () => {
     render(<LP />);
 
-    expect(screen.getByTestId('lo-button')).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'デッキ切れ' })).toBeDisabled();
 
-    await user.click(screen.getByTestId('window-lo-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'lo' }));
 
-    expect(screen.getByTestId('lo-button')).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'デッキ切れ' })).toBeDisabled();
   });
   it('先攻選択した状態で1Pのデッキ切れをチェックするとデッキ切れボタンは活性化', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-    expect(screen.getByTestId('lo-button')).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'デッキ切れ' })).toBeDisabled();
 
-    await user.click(screen.getByTestId('window-lo-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'lo' }));
 
-    expect(screen.getByTestId('lo-button')).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'デッキ切れ' })).toBeEnabled();
   });
   it('先攻選択した状態で2Pのデッキ切れをチェックするとデッキ切れボタンは活性化', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-    expect(screen.getByTestId('lo-button')).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'デッキ切れ' })).toBeDisabled();
 
-    await user.click(screen.getByTestId('window-lo-2p'));
+    await user.click(side2p().getByRole('checkbox', { name: 'lo' }));
 
-    expect(screen.getByTestId('lo-button')).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'デッキ切れ' })).toBeEnabled();
   });
   it('先攻選択した状態で1Pと2Pのデッキ切れをチェックするとデッキ切れボタンは活性化', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
-    expect(screen.getByTestId('lo-button')).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'デッキ切れ' })).toBeDisabled();
 
-    await user.click(screen.getByTestId('window-lo-1p'));
-    await user.click(screen.getByTestId('window-lo-2p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'lo' }));
+    await user.click(side2p().getByRole('checkbox', { name: 'lo' }));
 
-    expect(screen.getByTestId('lo-button')).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'デッキ切れ' })).toBeEnabled();
   });
   it('マッチ1戦目でデッキ切れボタンをクリックするとデュエル終了モーダルが表示がされる', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getByTestId('window-lo-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByRole('checkbox', { name: 'lo' }));
 
     expect(screen.queryByText('デュエル終了')).not.toBeInTheDocument();
 
-    await user.click(screen.getByTestId('lo-button'));
+    await user.click(screen.getByRole('button', { name: 'デッキ切れ' }));
 
     expect(screen.getByText('デュエル終了')).toBeInTheDocument();
   });
   it('マッチ最終戦でデッキ切れボタンをクリックすると保存確認モーダルが表示がされる', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getByTestId('window-lo-1p'));
-    await user.click(screen.getByTestId('lo-button'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByRole('checkbox', { name: 'lo' }));
+    await user.click(screen.getByRole('button', { name: 'デッキ切れ' }));
     await user.click(screen.getByText('はい'));
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getByTestId('window-lo-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByRole('checkbox', { name: 'lo' }));
 
     expect(screen.queryByText('保存確認')).not.toBeInTheDocument();
 
-    await user.click(screen.getByTestId('lo-button'));
+    await user.click(screen.getByRole('button', { name: 'デッキ切れ' }));
 
     expect(screen.getByText('保存確認')).toBeInTheDocument();
   });
@@ -864,19 +908,19 @@ describe('デッキ切れ', () => {
 describe('戻る', () => {
   it('初期状態から1PのLPを-1000した後に戻るを押すと1PのLPは8000に戻る', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('7000');
+    expect(side1p().getByText('7000')).toBeInTheDocument();
 
     await user.click(screen.getByText('戻る'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
+    expect(side1p().getByText('8000')).toBeInTheDocument();
   });
   it('初期状態から1PのLPを-1000した後に戻るを押すと戻るボタンは非活性になる', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
 
     expect(screen.getByText('戻る')).toBeEnabled();
 
@@ -886,37 +930,37 @@ describe('戻る', () => {
   });
   it('初期状態から1PのLPを-1000しさらに2PのLPを-2000した後に戻るを押すと1PのLPは7000のままだが2PのLPは8000に戻る', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('-2000')[1]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
+    await user.click(side2p().getByText('-2000'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('7000');
-    expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('6000');
+    expect(side1p().getByText('7000')).toBeInTheDocument();
+    expect(side2p().getByText('6000')).toBeInTheDocument();
 
     await user.click(screen.getByText('戻る'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('7000');
-    expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+    expect(side1p().getByText('7000')).toBeInTheDocument();
+    expect(side2p().getByText('8000')).toBeInTheDocument();
   });
   it('初期状態から1PのLPを-1000しさらに2PのLPを-2000した後に戻るを2回押すと1Pと2PのLPは8000に戻る', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('-2000')[1]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
+    await user.click(side2p().getByText('-2000'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('7000');
-    expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('6000');
+    expect(side1p().getByText('7000')).toBeInTheDocument();
+    expect(side2p().getByText('6000')).toBeInTheDocument();
 
     await user.click(screen.getByText('戻る'));
     await user.click(screen.getByText('戻る'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-    expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+    expect(side1p().getByText('8000')).toBeInTheDocument();
+    expect(side2p().getByText('8000')).toBeInTheDocument();
   });
   it('初期状態からLPを減算した後に戻るを押すとログは残ったままだが色塗りはされていない', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
     await user.click(screen.getByText('ログ'));
 
     expect(screen.getByTestId('modal-log')).toHaveClass('list-group-item-dark');
@@ -931,9 +975,9 @@ describe('戻る', () => {
   });
   it('初期状態からLPを2回減算した後に戻るを押すとログは2つ表示されたままだが1回目の減算ログが色塗りされる', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('-2000')[1]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
+    await user.click(side2p().getByText('-2000'));
     await user.click(screen.getByText('ログ'));
 
     expect(screen.getAllByTestId('modal-log')).toHaveLength(2);
@@ -958,18 +1002,18 @@ describe('戻る', () => {
   });
   it('LPを11回減算した後に戻るを押すと直近10件の減算ログのみ表示され最新の一つ前の減算ログが色塗りされる', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-100')[0]);
-    await user.click(screen.getAllByText('-200')[0]);
-    await user.click(screen.getAllByText('-300')[0]);
-    await user.click(screen.getAllByText('-400')[0]);
-    await user.click(screen.getAllByText('-500')[0]);
-    await user.click(screen.getAllByText('-600')[0]);
-    await user.click(screen.getAllByText('-700')[0]);
-    await user.click(screen.getAllByText('-800')[0]);
-    await user.click(screen.getAllByText('-900')[0]);
-    await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('-2000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-100'));
+    await user.click(side1p().getByText('-200'));
+    await user.click(side1p().getByText('-300'));
+    await user.click(side1p().getByText('-400'));
+    await user.click(side1p().getByText('-500'));
+    await user.click(side1p().getByText('-600'));
+    await user.click(side1p().getByText('-700'));
+    await user.click(side1p().getByText('-800'));
+    await user.click(side1p().getByText('-900'));
+    await user.click(side1p().getByText('-1000'));
+    await user.click(side1p().getByText('-2000'));
     await user.click(screen.getByText('ログ'));
 
     expect(screen.getAllByTestId('modal-log')).toHaveLength(10);
@@ -1006,18 +1050,18 @@ describe('戻る', () => {
   });
   it('LPを11回減算した後に戻るを9回押すと最新のLP減算ログを除いた10件が表示される', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-100')[0]);
-    await user.click(screen.getAllByText('-200')[0]);
-    await user.click(screen.getAllByText('-300')[0]);
-    await user.click(screen.getAllByText('-400')[0]);
-    await user.click(screen.getAllByText('-500')[0]);
-    await user.click(screen.getAllByText('-600')[0]);
-    await user.click(screen.getAllByText('-700')[0]);
-    await user.click(screen.getAllByText('-800')[0]);
-    await user.click(screen.getAllByText('-900')[0]);
-    await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('-2000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-100'));
+    await user.click(side1p().getByText('-200'));
+    await user.click(side1p().getByText('-300'));
+    await user.click(side1p().getByText('-400'));
+    await user.click(side1p().getByText('-500'));
+    await user.click(side1p().getByText('-600'));
+    await user.click(side1p().getByText('-700'));
+    await user.click(side1p().getByText('-800'));
+    await user.click(side1p().getByText('-900'));
+    await user.click(side1p().getByText('-1000'));
+    await user.click(side1p().getByText('-2000'));
     await user.click(screen.getByText('ログ'));
 
     expect(screen.getAllByTestId('modal-log')).toHaveLength(10);
@@ -1062,22 +1106,22 @@ describe('戻る', () => {
   });
   it('LPを15回減算した後に5回戻るを押すと最新から数えて2回目〜11回目のLP減算ログが表示される', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-100')[0]);
-    await user.click(screen.getAllByText('-100')[0]);
-    await user.click(screen.getAllByText('-100')[0]);
-    await user.click(screen.getAllByText('-100')[0]);
-    await user.click(screen.getAllByText('-100')[0]);
-    await user.click(screen.getAllByText('-200')[0]);
-    await user.click(screen.getAllByText('-300')[0]);
-    await user.click(screen.getAllByText('-400')[0]);
-    await user.click(screen.getAllByText('-500')[0]);
-    await user.click(screen.getAllByText('-600')[0]);
-    await user.click(screen.getAllByText('-700')[0]);
-    await user.click(screen.getAllByText('-800')[0]);
-    await user.click(screen.getAllByText('-900')[0]);
-    await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('-2000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-100'));
+    await user.click(side1p().getByText('-100'));
+    await user.click(side1p().getByText('-100'));
+    await user.click(side1p().getByText('-100'));
+    await user.click(side1p().getByText('-100'));
+    await user.click(side1p().getByText('-200'));
+    await user.click(side1p().getByText('-300'));
+    await user.click(side1p().getByText('-400'));
+    await user.click(side1p().getByText('-500'));
+    await user.click(side1p().getByText('-600'));
+    await user.click(side1p().getByText('-700'));
+    await user.click(side1p().getByText('-800'));
+    await user.click(side1p().getByText('-900'));
+    await user.click(side1p().getByText('-1000'));
+    await user.click(side1p().getByText('-2000'));
     await user.click(screen.getByText('ログ'));
 
     expect(screen.getAllByTestId('modal-log')[0]).toHaveTextContent(
@@ -1124,30 +1168,30 @@ describe('戻る', () => {
 describe('進む', () => {
   it('初期状態から1PのLPを-1000し戻るを押した後に進むを押すと1PのLPは7000に戻る', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
     await user.click(screen.getByText('戻る'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
+    expect(side1p().getByText('8000')).toBeInTheDocument();
 
     await user.click(screen.getByText('進む'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('7000');
+    expect(side1p().getByText('7000')).toBeInTheDocument();
   });
   it('初期状態から1PのLPを-1000しても進むボタンは非活性のまま', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
     expect(screen.getByText('進む')).toBeDisabled();
 
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByText('-1000'));
 
     expect(screen.getByText('進む')).toBeDisabled();
   });
   it('初期状態から1PのLPを-1000し戻るボタンを押した後に進むボタンを押すと進むボタンは非活性になる', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
     await user.click(screen.getByText('戻る'));
 
     expect(screen.getByText('進む')).toBeEnabled();
@@ -1158,25 +1202,25 @@ describe('進む', () => {
   });
   it('初期状態から1PのLPを-1000, 2PのLPを-2000し戻るを2回押した後に進むを押すと1PのLPは7000で2PのLPは8000になる', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('-2000')[1]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
+    await user.click(side2p().getByText('-2000'));
     await user.click(screen.getByText('戻る'));
     await user.click(screen.getByText('戻る'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('8000');
-    expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+    expect(side1p().getByText('8000')).toBeInTheDocument();
+    expect(side2p().getByText('8000')).toBeInTheDocument();
 
     await user.click(screen.getByText('進む'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('7000');
-    expect(screen.getByTestId('window-lp-2p')).toHaveTextContent('8000');
+    expect(side1p().getByText('7000')).toBeInTheDocument();
+    expect(side2p().getByText('8000')).toBeInTheDocument();
   });
   it('初期状態からLPを減算し戻るを押した後に進むを押すとLP減算ログは色塗りはされる', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('戻る')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
+    await user.click(screen.getByText('戻る'));
     await user.click(screen.getByText('ログ'));
 
     expect(screen.getByTestId('modal-log')).not.toHaveClass(
@@ -1191,9 +1235,9 @@ describe('進む', () => {
   });
   it('初期状態からLPを2回減算し戻るを2回押した後に進むを押すとログは2つ表示されたままだが1回目の減算ログが色塗りされる', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
-    await user.click(screen.getAllByText('-2000')[1]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
+    await user.click(side2p().getByText('-2000'));
     await user.click(screen.getByText('戻る'));
     await user.click(screen.getByText('戻る'));
     await user.click(screen.getByText('ログ'));
@@ -1274,18 +1318,18 @@ describe('ナビゲーションバー', () => {
   });
   it('初期状態から1PのLPを-1000すると戦績ページへのリンクは非アクティブになる', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
 
     expect(screen.getByText('戦績')).not.toHaveClass('disabled');
 
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByText('-1000'));
 
     expect(screen.getByText('戦績')).toHaveClass('disabled');
   });
   it('初期状態から1PのLPを-1000した後に戻るボタンを押しても戦績ページへのリンクは非アクティブのまま', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
 
     expect(screen.getByText('戦績')).toHaveClass('disabled');
 
@@ -1295,21 +1339,21 @@ describe('ナビゲーションバー', () => {
   });
   it('マッチ1戦目が終わった直後の戦績ページへのリンクは非アクティブ', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-3000')[0]);
-    await user.click(screen.getAllByText('-3000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
 
     expect(screen.getByText('戦績')).toHaveClass('disabled');
 
-    await user.click(screen.getAllByText('-3000')[0]);
+    await user.click(side1p().getByText('-3000'));
     await user.click(screen.getByText('はい'));
 
     expect(screen.getByText('戦績')).toHaveClass('disabled');
   });
   it('初期状態から1PのLPを-1000した後にリセットすると戦績ページへのリンクはアクティブになる', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-1000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-1000'));
 
     expect(screen.getByText('戦績')).toHaveClass('disabled');
 
@@ -1323,16 +1367,16 @@ describe('ナビゲーションバー', () => {
 describe('次デュエル確認', () => {
   it('マッチ1戦目で1PのLPが0になると次デュエル確認モーダルが表示される', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-3000')[0]);
-    await user.click(screen.getAllByText('-3000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
 
     expect(screen.queryByText('デュエル終了')).not.toBeInTheDocument();
     expect(
       screen.queryByText('次のデュエルを開始してよいですか？')
     ).not.toBeInTheDocument();
 
-    await user.click(screen.getAllByText('-3000')[0]);
+    await user.click(side1p().getByText('-3000'));
 
     expect(screen.getByText('デュエル終了')).toBeInTheDocument();
     expect(
@@ -1342,30 +1386,35 @@ describe('次デュエル確認', () => {
 
   it('1戦目は2Pが勝利したマッチの2戦目で2PのLPが0になると次デュエル確認モーダルが表示される', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-3000')[1]);
-    await user.click(screen.getAllByText('-3000')[1]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(screen.getByText('はい'));
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side2p().getByText('-3000'));
+    await user.click(side2p().getByText('-3000'));
 
     expect(screen.queryByText('デュエル終了')).not.toBeInTheDocument();
 
-    await user.click(screen.getAllByText('-3000')[1]);
+    await user.click(side2p().getByText('-3000'));
 
     expect(screen.getByText('デュエル終了')).toBeInTheDocument();
   });
 
   it('マッチ1戦目で1PのLPを0にし次デュエル確認モーダルを閉じた後に戻るを押し再び1PのLPを0にすると次デュエル確認モーダルが表示される', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-3000')[0]);
-    await user.click(screen.getAllByText('-3000')[0]);
-    await user.click(screen.getAllByText('-3000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
     await user.click(screen.getByText('いいえ'));
     await user.click(screen.getByText('戻る'));
 
-    expect(screen.getByTestId('window-lp-1p')).toHaveTextContent('2000');
+    expect(side1p().getByText('2000')).toBeInTheDocument();
     expect(screen.queryByText('デュエル終了')).not.toBeInTheDocument();
 
-    await user.click(screen.getAllByText('-3000')[0]);
+    await user.click(side1p().getByText('-3000'));
 
     expect(screen.getByText('デュエル終了')).toBeInTheDocument();
   });
@@ -1374,21 +1423,21 @@ describe('次デュエル確認', () => {
 describe('保存確認', () => {
   it('1Pが連敗すると保存確認モーダルが表示される', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-3000')[0]);
-    await user.click(screen.getAllByText('-3000')[0]);
-    await user.click(screen.getAllByText('-3000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
     await user.click(screen.getByText('はい'));
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-3000')[0]);
-    await user.click(screen.getAllByText('-3000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
 
     expect(screen.queryByText('保存確認')).not.toBeInTheDocument();
     expect(
       screen.queryByText('ゲーム結果を保存してよいですか？')
     ).not.toBeInTheDocument();
 
-    await user.click(screen.getAllByText('-3000')[0]);
+    await user.click(side1p().getByText('-3000'));
 
     expect(screen.getByText('保存確認')).toBeInTheDocument();
     expect(
@@ -1397,21 +1446,21 @@ describe('保存確認', () => {
   });
   it('2Pが連敗すると保存確認モーダルが表示される', async () => {
     render(<LP />);
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-3000')[1]);
-    await user.click(screen.getAllByText('-3000')[1]);
-    await user.click(screen.getAllByText('-3000')[1]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side2p().getByText('-3000'));
+    await user.click(side2p().getByText('-3000'));
+    await user.click(side2p().getByText('-3000'));
     await user.click(screen.getByText('はい'));
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-3000')[1]);
-    await user.click(screen.getAllByText('-3000')[1]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side2p().getByText('-3000'));
+    await user.click(side2p().getByText('-3000'));
 
     expect(screen.queryByText('保存確認')).not.toBeInTheDocument();
     expect(
       screen.queryByText('ゲーム結果を保存してよいですか？')
     ).not.toBeInTheDocument();
 
-    await user.click(screen.getAllByText('-3000')[1]);
+    await user.click(side2p().getByText('-3000'));
 
     expect(screen.getByText('保存確認')).toBeInTheDocument();
     expect(
@@ -1421,40 +1470,40 @@ describe('保存確認', () => {
   it('3回引き分けでも保存確認モーダルが表示される', async () => {
     render(<LP />);
     // 1戦目
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-3000')[0]);
-    await user.click(screen.getAllByText('-3000')[0]);
-    await user.click(screen.getAllByText('-3000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
     await user.click(screen.getByText('いいえ'));
-    await user.click(screen.getAllByText('-3000')[1]);
-    await user.click(screen.getAllByText('-3000')[1]);
-    await user.click(screen.getAllByText('-3000')[1]);
+    await user.click(side2p().getByText('-3000'));
+    await user.click(side2p().getByText('-3000'));
+    await user.click(side2p().getByText('-3000'));
     await user.click(screen.getByText('はい'));
     // 2戦目
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-3000')[0]);
-    await user.click(screen.getAllByText('-3000')[0]);
-    await user.click(screen.getAllByText('-3000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
     await user.click(screen.getByText('いいえ'));
-    await user.click(screen.getAllByText('-3000')[1]);
-    await user.click(screen.getAllByText('-3000')[1]);
-    await user.click(screen.getAllByText('-3000')[1]);
+    await user.click(side2p().getByText('-3000'));
+    await user.click(side2p().getByText('-3000'));
+    await user.click(side2p().getByText('-3000'));
     await user.click(screen.getByText('はい'));
     // 3戦目
-    await user.click(screen.getByTestId('window-first-switch-1p'));
-    await user.click(screen.getAllByText('-3000')[0]);
-    await user.click(screen.getAllByText('-3000')[0]);
-    await user.click(screen.getAllByText('-3000')[0]);
+    await user.click(side1p().getByRole('checkbox', { name: 'switch' }));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
+    await user.click(side1p().getByText('-3000'));
     await user.click(screen.getByText('いいえ'));
-    await user.click(screen.getAllByText('-3000')[1]);
-    await user.click(screen.getAllByText('-3000')[1]);
+    await user.click(side2p().getByText('-3000'));
+    await user.click(side2p().getByText('-3000'));
 
     expect(screen.queryByText('保存確認')).not.toBeInTheDocument();
     expect(
       screen.queryByText('ゲーム結果を保存してよいですか？')
     ).not.toBeInTheDocument();
 
-    await user.click(screen.getAllByText('-3000')[1]);
+    await user.click(side2p().getByText('-3000'));
 
     expect(screen.getByText('保存確認')).toBeInTheDocument();
     expect(

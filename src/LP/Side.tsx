@@ -1,8 +1,20 @@
+import styled from 'styled-components';
+
 import { Deck, ResultChar } from 'lib/result';
 
 import Controller from './Controller';
 import { Player, PlayerCtl } from './Game';
-import Window from './Window';
+import Panel from './Panel';
+import Result from './Result';
+
+const Root = styled.div`
+  width: 450px;
+`;
+
+const Top = styled.div`
+  display: flex;
+  justify-content: space-around;
+`;
 
 type Props = {
   decks: Deck[];
@@ -10,26 +22,24 @@ type Props = {
   ctl: PlayerCtl;
   disabled: boolean;
   results: ResultChar[];
-  isLeft: boolean;
 };
 
-const Side = (props: Props) => {
-  const { player, decks, ctl, results, isLeft, disabled } = props;
+export const Side1P = (props: Props) => {
+  const { player, decks, ctl, results, disabled } = props;
   return (
-    <div className="side">
-      <Window
-        decks={decks}
-        setDeck={ctl.setDeck}
-        toggleFirst={ctl.toggleFirst}
-        toggleLO={ctl.toggleLO}
-        lp={player.lp}
-        isFirst={player.isFirst}
-        lo={player.lo}
-        buf={player.buf}
-        mode={player.mode}
-        results={results}
-        isLeft={isLeft}
-      />
+    <Root data-testid="side-1p">
+      <Top>
+        <Panel
+          decks={decks}
+          setDeck={ctl.setDeck}
+          toggleFirst={ctl.toggleFirst}
+          lp={player.lp}
+          isFirst={player.isFirst}
+          buf={player.buf}
+          mode={player.mode}
+        />
+        <Result results={results} lo={player.lo} toggleLO={ctl.toggleLO} />
+      </Top>
       <Controller
         mode={player.mode}
         addLP={ctl.addLP}
@@ -38,8 +48,34 @@ const Side = (props: Props) => {
         pushKey={ctl.pushKey}
         disabled={disabled}
       />
-    </div>
+    </Root>
   );
 };
 
-export default Side;
+export const Side2P = (props: Props) => {
+  const { player, decks, ctl, results, disabled } = props;
+  return (
+    <Root data-testid="side-2p">
+      <Top>
+        <Result results={results} lo={player.lo} toggleLO={ctl.toggleLO} />
+        <Panel
+          decks={decks}
+          setDeck={ctl.setDeck}
+          toggleFirst={ctl.toggleFirst}
+          lp={player.lp}
+          isFirst={player.isFirst}
+          buf={player.buf}
+          mode={player.mode}
+        />
+      </Top>
+      <Controller
+        mode={player.mode}
+        addLP={ctl.addLP}
+        halfLP={ctl.halfLP}
+        changeMode={ctl.changeMode}
+        pushKey={ctl.pushKey}
+        disabled={disabled}
+      />
+    </Root>
+  );
+};

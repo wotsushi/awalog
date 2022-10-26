@@ -1,7 +1,6 @@
-import './style.scss';
-
 import { useState } from 'react';
 import { Container } from 'react-bootstrap';
+import styled from 'styled-components';
 
 import AWANav from 'AWANav';
 import { useDecks, useSaveResults, useUser } from 'lib/firebase';
@@ -9,8 +8,15 @@ import { Deck, toResultChars } from 'lib/result';
 
 import { useGame } from './Game';
 import { useCoinModal, useDiceModal, useResetModal } from './modal';
-import Side from './Side';
+import { Side1P, Side2P } from './Side';
 import Toolbar from './Toolbar';
+
+const Main = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 10px;
+`;
 
 type Props = {
   decks: Deck[];
@@ -62,24 +68,22 @@ const Content = ({ decks }: Props) => {
           undo={undo}
           redo={redo}
         />
-        <div className="sides">
-          <Side
+        <Main>
+          <Side1P
             decks={decks}
             player={player1}
             ctl={ctl1}
-            isLeft={true}
             results={toResultChars(result, 1)}
             disabled={disabled || !user}
           />
-          <Side
+          <Side2P
             decks={decks}
             player={player2}
             ctl={ctl2}
-            isLeft={false}
             results={toResultChars(result, 2)}
             disabled={disabled || !user}
           />
-        </div>
+        </Main>
       </Container>
       <NextGameModal />
       <SaveModal />
