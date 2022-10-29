@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Deck } from 'lib/result';
 
-import { summaryDeck } from './Summary';
+import { summaryDeck } from './Dashboard';
 
 const Root = styled(Nav)`
   width: 324px;
@@ -11,42 +11,39 @@ const Root = styled(Nav)`
 
 type Props = {
   decks: Deck[];
-  selectedDeck: Deck;
-  setDeck: (deck: Deck) => void;
+  subject: Deck;
+  setSubject: (deck: Deck) => void;
 };
 
-const Sidebar = (props: Props) => {
-  const { decks, selectedDeck, setDeck } = props;
-  return (
-    <Root
-      variant="pills"
-      className="flex-column"
-      onSelect={(eventKey: string) => {
-        if (eventKey) {
-          setDeck(
-            decks.find((deck) => String(deck.id) === eventKey) ?? summaryDeck
-          );
-        }
-      }}
-      data-testid="sidebar"
-    >
-      <Nav.Item>
-        <Nav.Link
-          eventKey={summaryDeck.id}
-          active={selectedDeck.id === summaryDeck.id}
-        >
-          サマリー
+const Sidebar = ({ decks, subject, setSubject }: Props) => (
+  <Root
+    variant="pills"
+    className="flex-column"
+    onSelect={(eventKey: string) => {
+      if (eventKey) {
+        setSubject(
+          decks.find((deck) => String(deck.id) === eventKey) ?? summaryDeck
+        );
+      }
+    }}
+    data-testid="sidebar"
+  >
+    <Nav.Item>
+      <Nav.Link
+        eventKey={summaryDeck.id}
+        active={subject.id === summaryDeck.id}
+      >
+        サマリー
+      </Nav.Link>
+    </Nav.Item>
+    {decks.map((deck) => (
+      <Nav.Item key={deck.id}>
+        <Nav.Link eventKey={deck.id} active={subject.id === deck.id}>
+          {deck.name}
         </Nav.Link>
       </Nav.Item>
-      {decks.map((deck) => (
-        <Nav.Item key={deck.id}>
-          <Nav.Link eventKey={deck.id} active={selectedDeck.id === deck.id}>
-            {deck.name}
-          </Nav.Link>
-        </Nav.Item>
-      ))}
-    </Root>
-  );
-};
+    ))}
+  </Root>
+);
 
 export default Sidebar;

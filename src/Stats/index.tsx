@@ -6,9 +6,8 @@ import AWANav from 'AWANav';
 import { useDecks, useResults, useUser } from 'lib/firebase';
 import { Deck } from 'lib/result';
 
-import Detail from './Detail';
+import Dashboard, { summaryDeck } from './Dashboard';
 import Sidebar from './Sidebar';
-import Summary, { summaryDeck } from './Summary';
 
 const Content = styled.div`
   display: flex;
@@ -18,19 +17,15 @@ const Stats = () => {
   const decks = useDecks();
   const results = useResults();
   const user = useUser();
-  const [deck, setDeck] = useState<Deck>(summaryDeck);
+  const [subject, setSubject] = useState<Deck>(summaryDeck);
 
   return (
     <>
       <AWANav user={user} />
       <Container>
         <Content>
-          <Sidebar decks={decks} selectedDeck={deck} setDeck={setDeck} />
-          {deck.name === summaryDeck.name ? (
-            <Summary decks={decks} results={results} />
-          ) : (
-            <Detail results={results} decks={decks} targetDeck={deck} />
-          )}
+          <Sidebar decks={decks} subject={subject} setSubject={setSubject} />
+          <Dashboard decks={decks} results={results} subject={subject} />
         </Content>
       </Container>
     </>
