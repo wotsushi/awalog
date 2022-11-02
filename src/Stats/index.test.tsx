@@ -359,9 +359,11 @@ describe('勝利数グラフ', () => {
           ]}
         />
       );
-      await user.click(screen.getByText('旋風BF'));
+      await user.click(screen.getByRole('button', { name: '旋風BF' }));
 
-      expect(screen.getByText('旋風BF')).toHaveClass('active');
+      expect(screen.getByRole('button', { name: '旋風BF' })).toHaveClass(
+        'active'
+      );
 
       expect(screen.getByText('勝利数:代行天使=1')).toBeInTheDocument();
       expect(screen.getByText('敗北数:代行天使=0')).toBeInTheDocument();
@@ -393,9 +395,11 @@ describe('勝利数グラフ', () => {
           ]}
         />
       );
-      await user.click(screen.getByText('代行天使'));
+      await user.click(screen.getByRole('button', { name: '代行天使' }));
 
-      expect(screen.getByText('代行天使')).toHaveClass('active');
+      expect(screen.getByRole('button', { name: '代行天使' })).toHaveClass(
+        'active'
+      );
 
       expect(screen.getByText('勝利数:旋風BF=0')).toBeInTheDocument();
       expect(screen.getByText('敗北数:旋風BF=1')).toBeInTheDocument();
@@ -458,9 +462,11 @@ describe('勝利数グラフ', () => {
           ]}
         />
       );
-      await user.click(screen.getByText('代行天使'));
+      await user.click(screen.getByRole('button', { name: '代行天使' }));
 
-      expect(screen.getByText('代行天使')).toHaveClass('active');
+      expect(screen.getByRole('button', { name: '代行天使' })).toHaveClass(
+        'active'
+      );
 
       expect(screen.getByText('勝利数:旋風BF=0')).toBeInTheDocument();
       expect(screen.getByText('勝利数:ヒーロービート=1')).toBeInTheDocument();
@@ -528,141 +534,141 @@ describe('勝率グラフ', () => {
       expect(screen.getByText('勝率:旋風BF=100')).toBeInTheDocument();
       expect(screen.getByText('勝率:代行天使=0')).toBeInTheDocument();
     });
-  });
-  it('旋風BFと代行天使で引き分けの戦績のみ存在する場合、旋風BFの勝率は0%、代行天使の勝率は0%', async () => {
-    render(
-      <Stats
-        results={[
-          {
-            decks: { 1: 1, 2: 2 },
-            duels: [
-              {
-                1: { lp: 1000, isFirst: true },
-                2: { lp: 0, isFirst: false },
-              },
-              {
-                1: { lp: 0, isFirst: true },
-                2: { lp: 2000, isFirst: false },
-              },
-              { 1: { lp: 0, isFirst: true }, 2: { lp: 0, isFirst: false } },
-            ],
-            format: 'Match',
-            datetime: '2022-09-23 08:45',
-          },
-        ]}
-        decks={[
-          { id: 1, name: '旋風BF' },
-          { id: 2, name: '代行天使' },
-        ]}
-      />
-    );
+    it('戦績が旋風BF勝ちと代行天使負け、旋風BF勝ちとヒーロービート負け、代行天使勝ちとヒーロービート負けの場合、旋風BFの勝率は100%で勝利数2敗北数0引き分け数0、代行天使の勝率は50%、ヒーロービートの勝率は0%', async () => {
+      render(
+        <Stats
+          results={[
+            {
+              decks: { 1: 1, 2: 2 },
+              duels: [
+                {
+                  1: { lp: 1000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 2000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:45',
+            },
+            {
+              decks: { 1: 3, 2: 1 },
+              duels: [
+                {
+                  1: { lp: 0, isFirst: true },
+                  2: { lp: 1000, isFirst: false },
+                },
+                {
+                  1: { lp: 0, isFirst: true },
+                  2: { lp: 2000, isFirst: false },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:45',
+            },
+            {
+              decks: { 1: 2, 2: 3 },
+              duels: [
+                {
+                  1: { lp: 1000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 2000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:45',
+            },
+          ]}
+          decks={[
+            { id: 1, name: '旋風BF' },
+            { id: 2, name: '代行天使' },
+            { id: 3, name: 'ヒーロービート' },
+          ]}
+        />
+      );
+      await user.selectOptions(screen.getByRole('combobox'), '勝率');
 
-    await user.selectOptions(screen.getByRole('combobox'), '勝率');
+      expect(screen.getByText('サマリー')).toHaveClass('active');
+      expect(screen.getByRole('combobox')).toHaveDisplayValue('勝率');
 
-    expect(screen.getByText('サマリー')).toHaveClass('active');
-    expect(screen.getByRole('combobox')).toHaveDisplayValue('勝率');
+      expect(screen.getByText('勝率:旋風BF=100')).toBeInTheDocument();
+      expect(screen.getByText('勝率:代行天使=50')).toBeInTheDocument();
+      expect(screen.getByText('勝率:ヒーロービート=0')).toBeInTheDocument();
+    });
+    it('旋風BFと代行天使で引き分けの戦績のみ存在する場合、旋風BFの勝率は0%、代行天使の勝率は0%', async () => {
+      render(
+        <Stats
+          results={[
+            {
+              decks: { 1: 1, 2: 2 },
+              duels: [
+                {
+                  1: { lp: 1000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 0, isFirst: true },
+                  2: { lp: 2000, isFirst: false },
+                },
+                { 1: { lp: 0, isFirst: true }, 2: { lp: 0, isFirst: false } },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:45',
+            },
+          ]}
+          decks={[
+            { id: 1, name: '旋風BF' },
+            { id: 2, name: '代行天使' },
+          ]}
+        />
+      );
 
-    expect(screen.getByText('勝率:旋風BF=0')).toBeInTheDocument();
-    expect(screen.getByText('勝率:代行天使=0')).toBeInTheDocument();
-  });
-  it('戦績が旋風BF勝ちと代行天使負け、旋風BF勝ちとヒーロービート負け、代行天使勝ちとヒーロービート負けの場合、旋風BFの勝率は100%で勝利数2敗北数0引き分け数0、代行天使の勝率は50%、ヒーロービートの勝率は0%', async () => {
-    render(
-      <Stats
-        results={[
-          {
-            decks: { 1: 1, 2: 2 },
-            duels: [
-              {
-                1: { lp: 1000, isFirst: true },
-                2: { lp: 0, isFirst: false },
-              },
-              {
-                1: { lp: 2000, isFirst: true },
-                2: { lp: 0, isFirst: false },
-              },
-            ],
-            format: 'Match',
-            datetime: '2022-09-23 08:45',
-          },
-          {
-            decks: { 1: 3, 2: 1 },
-            duels: [
-              {
-                1: { lp: 0, isFirst: true },
-                2: { lp: 1000, isFirst: false },
-              },
-              {
-                1: { lp: 0, isFirst: true },
-                2: { lp: 2000, isFirst: false },
-              },
-            ],
-            format: 'Match',
-            datetime: '2022-09-23 08:45',
-          },
-          {
-            decks: { 1: 2, 2: 3 },
-            duels: [
-              {
-                1: { lp: 1000, isFirst: true },
-                2: { lp: 0, isFirst: false },
-              },
-              {
-                1: { lp: 2000, isFirst: true },
-                2: { lp: 0, isFirst: false },
-              },
-            ],
-            format: 'Match',
-            datetime: '2022-09-23 08:45',
-          },
-        ]}
-        decks={[
-          { id: 1, name: '旋風BF' },
-          { id: 2, name: '代行天使' },
-          { id: 3, name: 'ヒーロービート' },
-        ]}
-      />
-    );
-    await user.selectOptions(screen.getByRole('combobox'), '勝率');
+      await user.selectOptions(screen.getByRole('combobox'), '勝率');
 
-    expect(screen.getByText('サマリー')).toHaveClass('active');
-    expect(screen.getByRole('combobox')).toHaveDisplayValue('勝率');
+      expect(screen.getByText('サマリー')).toHaveClass('active');
+      expect(screen.getByRole('combobox')).toHaveDisplayValue('勝率');
 
-    expect(screen.getByText('勝率:旋風BF=100')).toBeInTheDocument();
-    expect(screen.getByText('勝率:代行天使=50')).toBeInTheDocument();
-    expect(screen.getByText('勝率:ヒーロービート=0')).toBeInTheDocument();
-  });
-  it('ミラーマッチの戦績のみ存在する場合、戦績は空', async () => {
-    render(
-      <Stats
-        results={[
-          {
-            decks: { 1: 1, 2: 1 },
-            duels: [
-              {
-                1: { lp: 1000, isFirst: true },
-                2: { lp: 0, isFirst: false },
-              },
-              {
-                1: { lp: 2000, isFirst: true },
-                2: { lp: 0, isFirst: false },
-              },
-            ],
-            format: 'Match',
-            datetime: '2022-09-23 08:45',
-          },
-        ]}
-        decks={[
-          { id: 1, name: '旋風BF' },
-          { id: 2, name: '旋風BF' },
-        ]}
-      />
-    );
-    await user.selectOptions(screen.getByRole('combobox'), '勝率');
+      expect(screen.getByText('勝率:旋風BF=0')).toBeInTheDocument();
+      expect(screen.getByText('勝率:代行天使=0')).toBeInTheDocument();
+    });
+    it('ミラーマッチの戦績のみ存在する場合、戦績は空', async () => {
+      render(
+        <Stats
+          results={[
+            {
+              decks: { 1: 1, 2: 1 },
+              duels: [
+                {
+                  1: { lp: 1000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 2000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:45',
+            },
+          ]}
+          decks={[
+            { id: 1, name: '旋風BF' },
+            { id: 2, name: '旋風BF' },
+          ]}
+        />
+      );
+      await user.selectOptions(screen.getByRole('combobox'), '勝率');
 
-    expect(screen.getByText('サマリー')).toHaveClass('active');
-    expect(screen.getByRole('combobox')).toHaveDisplayValue('勝率');
+      expect(screen.getByText('サマリー')).toHaveClass('active');
+      expect(screen.getByRole('combobox')).toHaveDisplayValue('勝率');
 
-    expect(screen.queryByText(/.*:.*=/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/.*:.*=/)).not.toBeInTheDocument();
+    });
   });
   describe('個別', () => {
     it('戦績が空の場合、旋風BFの個別戦績グラフは空', async () => {
@@ -709,10 +715,12 @@ describe('勝率グラフ', () => {
           ]}
         />
       );
-      await user.click(screen.getByText('旋風BF'));
+      await user.click(screen.getByRole('button', { name: '旋風BF' }));
       await user.selectOptions(screen.getByRole('combobox'), '勝率');
 
-      expect(screen.getByText('旋風BF')).toHaveClass('active');
+      expect(screen.getByRole('button', { name: '旋風BF' })).toHaveClass(
+        'active'
+      );
       expect(screen.getByRole('combobox')).toHaveDisplayValue('勝率');
 
       expect(screen.getByText('勝率:代行天使=100')).toBeInTheDocument();
@@ -743,10 +751,12 @@ describe('勝率グラフ', () => {
           ]}
         />
       );
-      await user.click(screen.getByText('代行天使'));
+      await user.click(screen.getByRole('button', { name: '代行天使' }));
       await user.selectOptions(screen.getByRole('combobox'), '勝率');
 
-      expect(screen.getByText('代行天使')).toHaveClass('active');
+      expect(screen.getByRole('button', { name: '代行天使' })).toHaveClass(
+        'active'
+      );
       expect(screen.getByRole('combobox')).toHaveDisplayValue('勝率');
 
       expect(screen.getByText('勝率:旋風BF=0')).toBeInTheDocument();
@@ -808,14 +818,279 @@ describe('勝率グラフ', () => {
           ]}
         />
       );
-      await user.click(screen.getByText('代行天使'));
+      await user.click(screen.getByRole('button', { name: '代行天使' }));
       await user.selectOptions(screen.getByRole('combobox'), '勝率');
 
-      expect(screen.getByText('代行天使')).toHaveClass('active');
+      expect(screen.getByRole('button', { name: '代行天使' })).toHaveClass(
+        'active'
+      );
       expect(screen.getByRole('combobox')).toHaveDisplayValue('勝率');
 
       expect(screen.getByText('勝率:旋風BF=0')).toBeInTheDocument();
       expect(screen.getByText('勝率:ヒーロービート=100')).toBeInTheDocument();
+    });
+  });
+});
+
+describe('リーセント表', () => {
+  describe('サマリー', () => {
+    it('新しいゲームから順に表示される', () => {
+      render(
+        <Stats
+          decks={[
+            { id: 1, name: '旋風BF' },
+            { id: 2, name: '代行天使' },
+          ]}
+          results={[
+            {
+              decks: { 1: 1, 2: 2 },
+              duels: [
+                {
+                  1: { lp: 100, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 200, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:45',
+            },
+            {
+              decks: { 1: 2, 2: 1 },
+              duels: [
+                {
+                  1: { lp: 1000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 1000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-10-23 08:45',
+            },
+          ]}
+        />
+      );
+
+      const rows = screen.getAllByTestId('recent-row');
+      expect(within(rows[0]).getByText('2')).toBeInTheDocument();
+      expect(within(rows[1]).getByText('1')).toBeInTheDocument();
+    });
+
+    it('日時列はyyyy年MM月HH:mmの形式で表示される', () => {
+      render(
+        <Stats
+          decks={[
+            { id: 1, name: '旋風BF' },
+            { id: 2, name: '代行天使' },
+          ]}
+          results={[
+            {
+              decks: { 1: 1, 2: 2 },
+              duels: [
+                {
+                  1: { lp: 100, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 200, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:09',
+            },
+          ]}
+        />
+      );
+
+      const row = within(screen.getByTestId('recent-row'));
+      expect(row.getByText('2022年09月23日08:09')).toBeInTheDocument();
+    });
+
+    it('結果列にはデッキ名をヘッダー、各デュエル結果を行とする表が表示される', () => {
+      render(
+        <Stats
+          decks={[
+            { id: 1, name: '旋風BF' },
+            { id: 2, name: '代行天使' },
+          ]}
+          results={[
+            {
+              decks: { 1: 1, 2: 2 },
+              duels: [
+                {
+                  1: { lp: 100, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 0, isFirst: false },
+                  2: { lp: 200, isFirst: true },
+                },
+                {
+                  1: { lp: 1000, isFirst: false },
+                  2: { lp: 0, isFirst: true },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:09',
+            },
+          ]}
+        />
+      );
+
+      const row = within(screen.getByTestId('recent-row'));
+      const resultRows = row.getAllByRole('row');
+      const resultHeader = within(resultRows[0]);
+      expect(resultHeader.getAllByRole('cell')[0]).toHaveTextContent('旋風BF');
+      expect(resultHeader.getAllByRole('cell')[1]).toHaveTextContent(
+        '代行天使'
+      );
+      const firstDuel = within(resultRows[1]);
+      expect(firstDuel.getAllByRole('cell')[0]).toHaveTextContent('100[先]');
+      expect(firstDuel.getAllByRole('cell')[1]).toHaveTextContent('0[後]');
+      const secondDuel = within(resultRows[2]);
+      expect(secondDuel.getAllByRole('cell')[0]).toHaveTextContent('0[後]');
+      expect(secondDuel.getAllByRole('cell')[1]).toHaveTextContent('200[先]');
+      const thirdDuel = within(resultRows[3]);
+      expect(thirdDuel.getAllByRole('cell')[0]).toHaveTextContent('1000[後]');
+      expect(thirdDuel.getAllByRole('cell')[1]).toHaveTextContent('0[先]');
+    });
+  });
+
+  describe('個別', () => {
+    it('戦績が空の場合、旋風BFのリーセント表は空', async () => {
+      render(
+        <Stats
+          results={[]}
+          decks={[
+            { id: 1, name: '旋風BF' },
+            { id: 2, name: '代行天使' },
+          ]}
+        />
+      );
+      await user.click(screen.getByText('旋風BF'));
+
+      expect(screen.getByText('旋風BF')).toHaveClass('active');
+      expect(screen.queryByTestId('recent-row')).not.toBeInTheDocument();
+    });
+    it('旋風BF対代行天使の試合と代行天使対ヒーロービートの試合が記録されている場合、ヒーロービートのリーセント表には代行天使対ヒーロービートの試合のみ表示され番号列の値は1となる', async () => {
+      render(
+        <Stats
+          results={[
+            {
+              decks: { 1: 1, 2: 2 },
+              duels: [
+                {
+                  1: { lp: 1000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 2000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:45',
+            },
+            {
+              decks: { 1: 2, 2: 3 },
+              duels: [
+                {
+                  1: { lp: 0, isFirst: true },
+                  2: { lp: 1000, isFirst: false },
+                },
+                {
+                  1: { lp: 0, isFirst: true },
+                  2: { lp: 2000, isFirst: false },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-10-23 08:45',
+            },
+          ]}
+          decks={[
+            { id: 1, name: '旋風BF' },
+            { id: 2, name: '代行天使' },
+            { id: 3, name: 'ヒーロービート' },
+          ]}
+        />
+      );
+      await user.click(screen.getByRole('button', { name: 'ヒーロービート' }));
+
+      expect(
+        screen.getByRole('button', { name: 'ヒーロービート' })
+      ).toHaveClass('active');
+      const row = within(screen.getByTestId('recent-row'));
+      expect(row.getByText('1')).toBeInTheDocument();
+      expect(row.queryByText('2')).not.toBeInTheDocument();
+      expect(row.getByText('2022年10月23日08:45')).toBeInTheDocument();
+      expect(row.getByText('ヒーロービート')).toBeInTheDocument();
+      expect(row.queryByText('旋風BF')).not.toBeInTheDocument();
+      expect(row.getByText('代行天使')).toBeInTheDocument();
+    });
+    it('代行天使のリーセント表の各結果表の1列目は代行天使である', async () => {
+      render(
+        <Stats
+          results={[
+            {
+              decks: { 1: 1, 2: 2 },
+              duels: [
+                {
+                  1: { lp: 1000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 2000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:45',
+            },
+            {
+              decks: { 1: 2, 2: 3 },
+              duels: [
+                {
+                  1: { lp: 0, isFirst: true },
+                  2: { lp: 1000, isFirst: false },
+                },
+                {
+                  1: { lp: 0, isFirst: true },
+                  2: { lp: 2000, isFirst: false },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-10-23 08:45',
+            },
+          ]}
+          decks={[
+            { id: 1, name: '旋風BF' },
+            { id: 2, name: '代行天使' },
+            { id: 3, name: 'ヒーロービート' },
+          ]}
+        />
+      );
+      await user.click(screen.getByRole('button', { name: '代行天使' }));
+
+      expect(screen.getByRole('button', { name: '代行天使' })).toHaveClass(
+        'active'
+      );
+      const recentRows = screen.getAllByTestId('recent-row');
+      expect(
+        within(within(recentRows[0]).getAllByRole('row')[0]).getAllByRole(
+          'cell'
+        )[0]
+      ).toHaveTextContent('代行天使');
+      expect(
+        within(within(recentRows[1]).getAllByRole('row')[0]).getAllByRole(
+          'cell'
+        )[0]
+      ).toHaveTextContent('代行天使');
     });
   });
 });

@@ -15,6 +15,7 @@ import { Deck, Result } from 'lib/result';
 
 import WLDChart from './charts/WLDChart';
 import WPChart from './charts/WPChart';
+import Recent from './Recent';
 
 ChartJS.register(
   CategoryScale,
@@ -39,6 +40,10 @@ const Charts = {
   WPChart: WPChart,
   WLDChart: WLDChart,
 } as const;
+
+const StyledRecent = styled(Recent)`
+  margin-top: 5px;
+`;
 
 type Props = {
   decks: Deck[];
@@ -65,6 +70,7 @@ const Dashboard = ({ decks, results, subject }: Props) => {
         <option value="WPChart">勝率</option>
       </ChartSelector>
       {<Chart decks={decks} results={results} subjectID={subject.id} />}
+      <StyledRecent decks={decks} results={results} subjectID={subject.id} />
     </Root>
   );
 };
