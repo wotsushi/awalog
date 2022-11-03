@@ -1,8 +1,14 @@
 import { User } from 'firebase/auth';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
 import { useLogout } from 'lib/firebase';
+
+const StyledNavbar = styled(Navbar)`
+  position: sticky;
+  top: 0;
+`;
 
 type Props = {
   disabledStats?: boolean;
@@ -12,7 +18,7 @@ type Props = {
 const AWANav = (props: Props) => {
   const logout = useLogout();
   return (
-    <Navbar bg="light">
+    <StyledNavbar bg="light">
       <Container>
         <Navbar.Brand as={Link} to="/">
           awalog
@@ -39,7 +45,7 @@ const AWANav = (props: Props) => {
           )}
         </Nav>
       </Container>
-    </Navbar>
+    </StyledNavbar>
   );
 };
 

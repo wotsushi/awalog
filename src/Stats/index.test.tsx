@@ -113,6 +113,50 @@ describe('サイドメニュー', () => {
     expect(screen.getByText('サマリー')).not.toHaveClass('active');
     expect(screen.getByText('旋風BF')).toHaveClass('active');
   });
+  it('デッキが16個ある場合、ページ1にはサマリーと15個のデッキが表示される', async () => {
+    render(
+      <Stats
+        decks={[...Array(16)].map((_, i) => ({
+          id: i + 1,
+          name: `デッキ${i + 1}`,
+        }))}
+      />
+    );
+
+    const sidebar = within(screen.getByTestId('sidebar'));
+    const pages = sidebar.getAllByRole('listitem');
+    expect(pages).toHaveLength(2);
+    expect(pages[0]).toHaveClass('active');
+    expect(pages[1]).not.toHaveClass('active');
+    expect(sidebar.getByText('サマリー')).toBeInTheDocument();
+    [...Array(15)].forEach((_, i) => {
+      expect(sidebar.getByText(`デッキ${i + 1}`)).toBeInTheDocument();
+    });
+    expect(sidebar.queryByText('デッキ16')).not.toBeInTheDocument();
+  });
+  it('デッキが16個ある場合、ページ2には16個目のデッキ個表示される', async () => {
+    render(
+      <Stats
+        decks={[...Array(16)].map((_, i) => ({
+          id: i + 1,
+          name: `デッキ${i + 1}`,
+        }))}
+      />
+    );
+    const sidebar = within(screen.getByTestId('sidebar'));
+
+    await userEvent.click(sidebar.getByText('2'));
+
+    const pages = sidebar.getAllByRole('listitem');
+    expect(pages).toHaveLength(2);
+    expect(pages[0]).not.toHaveClass('active');
+    expect(pages[1]).toHaveClass('active');
+    expect(sidebar.getByText('サマリー')).toBeInTheDocument();
+    [...Array(15)].forEach((_, i) => {
+      expect(sidebar.queryByText(`デッキ${i + 1}`)).not.toBeInTheDocument();
+    });
+    expect(sidebar.getByText('デッキ16')).toBeInTheDocument();
+  });
 });
 
 describe('勝利数グラフ', () => {
