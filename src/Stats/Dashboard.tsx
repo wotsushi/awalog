@@ -27,13 +27,13 @@ ChartJS.register(
 );
 
 const Root = styled.div`
-  padding-top: 5px;
   width: 700px;
+  padding-top: 5px;
 `;
 
 const ChartSelector = styled(Form.Select)`
-  width: 180px;
   float: right;
+  width: 180px;
 `;
 
 const Charts = {

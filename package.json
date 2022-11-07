@@ -33,6 +33,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eslint": "eslint ./src --ext .ts,.tsx",
+    "lint:css": "stylelint './src/**/*.tsx'",
     "prettier": "prettier ./src --check",
     "eject": "react-scripts eject",
     "deploy": "gh-pages -d build"
@@ -50,12 +51,18 @@
     ]
   },
   "devDependencies": {
+    "@stylelint/postcss-css-in-js": "^0.38.0",
     "@testing-library/user-event": "^14.2.5",
     "@typescript-eslint/parser": "^5.40.0",
     "eslint-import-resolver-typescript": "^3.5.1",
     "eslint-plugin-import": "^2.26.0",
     "gh-pages": "^4.0.0",
-    "prettier": "^2.7.1"
+    "prettier": "^2.7.1",
+    "stylelint": "^14.14.1",
+    "stylelint-config-recess-order": "^3.0.0",
+    "stylelint-config-recommended": "^9.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.10.0"
   },
   "homepage": "https://wotsushi.github.io/awalog/"
 }

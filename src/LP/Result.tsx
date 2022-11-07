@@ -10,9 +10,9 @@ import styled from 'styled-components';
 import { ResultChar } from 'lib/result';
 
 const Root = styled.div`
-  align-items: center;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: space-evenly;
   width: 130px;
 `;

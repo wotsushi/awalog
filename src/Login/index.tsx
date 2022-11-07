@@ -6,12 +6,12 @@ import AWANav from 'AWANav';
 import { useLogin, useUser } from 'lib/firebase';
 
 const LoginForm = styled(Form)`
-  width: 400px;
-  height: 200px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 400px;
+  height: 200px;
+  margin: 0 auto;
 `;
 
 const Login = () => {

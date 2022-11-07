@@ -11,5 +11,7 @@ jobs:
         run: yarn prettier
       - name: Run ESLint
         run: yarn eslint
+      - name: Run Stylelint
+        run: yarn lint:css
       - name: Run tests
         run: yarn test

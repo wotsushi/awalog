@@ -6,15 +6,15 @@ import { Deck } from 'lib/result';
 import { Mode } from './Game';
 
 const Root = styled.div`
-  padding: 10px;
   width: 250px;
+  padding: 10px;
 `;
 
 const FirstSwitch = styled.div`
   display: flex;
   justify-content: flex-end;
-  font-size: 28px;
   margin-top: 5px;
+  font-size: 28px;
 `;
 
 const LP = styled.div`

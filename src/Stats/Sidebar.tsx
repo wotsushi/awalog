@@ -10,10 +10,10 @@ import { summaryDeck } from './Dashboard';
 const pageSize = 15;
 
 const Root = styled.div`
-  width: 324px;
-  height: 712px;
   position: sticky;
   top: 56px;
+  width: 324px;
+  height: 712px;
 `;
 
 const StyledNav = styled(Nav)`

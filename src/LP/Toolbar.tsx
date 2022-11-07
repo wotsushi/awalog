@@ -6,10 +6,10 @@ import styled from 'styled-components';
 import { LPHistory } from './Game';
 
 const Root = styled.div`
-  width: 65%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  width: 65%;
 `;
 
 const GameStatus = styled.div`
