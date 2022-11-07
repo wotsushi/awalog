@@ -8,9 +8,9 @@ jobs:
       - name: Install modules
         run: yarn
       - name: Run Prettier Check
-        run: yarn prettier
+        run: yarn format:check
       - name: Run ESLint
-        run: yarn eslint
+        run: yarn lint:ts
       - name: Run Stylelint
         run: yarn lint:css
       - name: Run tests

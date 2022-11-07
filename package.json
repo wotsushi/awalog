@@ -32,9 +32,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eslint": "eslint ./src --ext .ts,.tsx",
+    "lint:ts": "eslint ./src --ext .ts,.tsx",
     "lint:css": "stylelint './src/**/*.tsx'",
-    "prettier": "prettier ./src --check",
+    "format:check": "prettier ./src --check",
     "eject": "react-scripts eject",
     "deploy": "gh-pages -d build"
   },
