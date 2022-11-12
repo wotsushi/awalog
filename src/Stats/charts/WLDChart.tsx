@@ -84,12 +84,6 @@ const WLDChart = ({ decks, results, subjectID }: Props) => {
             stacked: true,
           },
         },
-        plugins: {
-          title: {
-            display: true,
-            text: '勝利数・敗北数・引き分け数',
-          },
-        },
       }}
       data={{
         labels,

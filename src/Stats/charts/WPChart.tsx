@@ -85,10 +85,6 @@ const WPChart = ({ results, decks, subjectID }: Props) => {
           },
         },
         plugins: {
-          title: {
-            display: true,
-            text: '勝率',
-          },
           legend: {
             display: false,
           },

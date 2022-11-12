@@ -876,6 +876,213 @@ describe('勝率グラフ', () => {
   });
 });
 
+describe('先後別勝敗', () => {
+  describe('サマリー', () => {
+    it('戦績が空の場合、グラフは空', async () => {
+      render(
+        <Stats
+          results={[]}
+          decks={[
+            { id: 1, name: '旋風BF' },
+            { id: 2, name: '代行天使' },
+          ]}
+        />
+      );
+      await user.selectOptions(screen.getByRole('combobox'), '先後別勝敗');
+
+      expect(screen.getByText('サマリー')).toHaveClass('active');
+      expect(screen.getByRole('combobox')).toHaveDisplayValue('先後別勝敗');
+
+      expect(screen.queryByText(/.*:.*=/)).not.toBeInTheDocument();
+    });
+    it('旋風BF対代行天使で先o先x後oの戦績のみ存在する場合、旋風BFは先勝1先負1後勝1、代行天使は先負1後勝1後負1', async () => {
+      render(
+        <Stats
+          results={[
+            {
+              decks: { 1: 1, 2: 2 },
+              duels: [
+                {
+                  1: { lp: 1000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 0, isFirst: true },
+                  2: { lp: 2000, isFirst: false },
+                },
+                {
+                  1: { lp: 3000, isFirst: false },
+                  2: { lp: 0, isFirst: true },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:45',
+            },
+          ]}
+          decks={[
+            { id: 1, name: '旋風BF' },
+            { id: 2, name: '代行天使' },
+          ]}
+        />
+      );
+
+      await user.selectOptions(screen.getByRole('combobox'), '先後別勝敗');
+
+      expect(screen.getByText('サマリー')).toHaveClass('active');
+      expect(screen.getByRole('combobox')).toHaveDisplayValue('先後別勝敗');
+
+      expect(screen.getByText('先勝:旋風BF=1')).toBeInTheDocument();
+      expect(screen.getByText('先負:旋風BF=1')).toBeInTheDocument();
+      expect(screen.getByText('後勝:旋風BF=1')).toBeInTheDocument();
+      expect(screen.getByText('先負:代行天使=1')).toBeInTheDocument();
+      expect(screen.getByText('後勝:代行天使=1')).toBeInTheDocument();
+      expect(screen.getByText('後負:代行天使=1')).toBeInTheDocument();
+    });
+    it('ミラーマッチの勝敗は両方ともカウントされる', async () => {
+      render(
+        <Stats
+          results={[
+            {
+              decks: { 1: 1, 2: 1 },
+              duels: [
+                {
+                  1: { lp: 1000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 0, isFirst: true },
+                  2: { lp: 2000, isFirst: false },
+                },
+                {
+                  1: { lp: 3000, isFirst: false },
+                  2: { lp: 0, isFirst: true },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:45',
+            },
+          ]}
+          decks={[{ id: 1, name: '旋風BF' }]}
+        />
+      );
+
+      await user.selectOptions(screen.getByRole('combobox'), '先後別勝敗');
+
+      expect(screen.getByText('サマリー')).toHaveClass('active');
+      expect(screen.getByRole('combobox')).toHaveDisplayValue('先後別勝敗');
+
+      expect(screen.getByText('先勝:旋風BF=1')).toBeInTheDocument();
+      expect(screen.getByText('先負:旋風BF=2')).toBeInTheDocument();
+      expect(screen.getByText('後勝:旋風BF=2')).toBeInTheDocument();
+      expect(screen.getByText('後負:旋風BF=1')).toBeInTheDocument();
+    });
+  });
+  describe('個別', () => {
+    it('戦績が空の場合、旋風BFの個別戦績グラフは空', async () => {
+      render(
+        <Stats
+          results={[]}
+          decks={[
+            { id: 1, name: '旋風BF' },
+            { id: 2, name: '代行天使' },
+          ]}
+        />
+      );
+      await user.click(screen.getByRole('button', { name: '旋風BF' }));
+      await user.selectOptions(screen.getByRole('combobox'), '先後別勝敗');
+
+      expect(screen.getByRole('button', { name: '旋風BF' })).toHaveClass(
+        'active'
+      );
+      expect(screen.getByRole('combobox')).toHaveDisplayValue('先後別勝敗');
+
+      expect(screen.queryByText(/.*:.*=/)).not.toBeInTheDocument();
+    });
+    it('旋風BF対代行天使で先o先x後oの戦績のみ存在する場合の旋風BF個別戦績: 代行天使に対して先勝1先負1後勝1', async () => {
+      render(
+        <Stats
+          results={[
+            {
+              decks: { 1: 1, 2: 2 },
+              duels: [
+                {
+                  1: { lp: 1000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 0, isFirst: true },
+                  2: { lp: 2000, isFirst: false },
+                },
+                {
+                  1: { lp: 3000, isFirst: false },
+                  2: { lp: 0, isFirst: true },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:45',
+            },
+          ]}
+          decks={[
+            { id: 1, name: '旋風BF' },
+            { id: 2, name: '代行天使' },
+          ]}
+        />
+      );
+      await user.click(screen.getByRole('button', { name: '旋風BF' }));
+      await user.selectOptions(screen.getByRole('combobox'), '先後別勝敗');
+
+      expect(screen.getByRole('button', { name: '旋風BF' })).toHaveClass(
+        'active'
+      );
+      expect(screen.getByRole('combobox')).toHaveDisplayValue('先後別勝敗');
+
+      expect(screen.getByText('先勝:代行天使=1')).toBeInTheDocument();
+      expect(screen.getByText('先負:代行天使=1')).toBeInTheDocument();
+      expect(screen.getByText('後勝:代行天使=1')).toBeInTheDocument();
+    });
+    it('ミラーマッチの勝敗は両方ともカウントされる', async () => {
+      render(
+        <Stats
+          results={[
+            {
+              decks: { 1: 1, 2: 1 },
+              duels: [
+                {
+                  1: { lp: 1000, isFirst: true },
+                  2: { lp: 0, isFirst: false },
+                },
+                {
+                  1: { lp: 0, isFirst: true },
+                  2: { lp: 2000, isFirst: false },
+                },
+                {
+                  1: { lp: 3000, isFirst: false },
+                  2: { lp: 0, isFirst: true },
+                },
+              ],
+              format: 'Match',
+              datetime: '2022-09-23 08:45',
+            },
+          ]}
+          decks={[{ id: 1, name: '旋風BF' }]}
+        />
+      );
+      await user.click(screen.getByRole('button', { name: '旋風BF' }));
+      await user.selectOptions(screen.getByRole('combobox'), '先後別勝敗');
+
+      expect(screen.getByRole('button', { name: '旋風BF' })).toHaveClass(
+        'active'
+      );
+      expect(screen.getByRole('combobox')).toHaveDisplayValue('先後別勝敗');
+
+      expect(screen.getByText('先勝:旋風BF=1')).toBeInTheDocument();
+      expect(screen.getByText('先負:旋風BF=2')).toBeInTheDocument();
+      expect(screen.getByText('後勝:旋風BF=2')).toBeInTheDocument();
+      expect(screen.getByText('後負:旋風BF=1')).toBeInTheDocument();
+    });
+  });
+});
+
 describe('リーセント表', () => {
   describe('サマリー', () => {
     it('新しいゲームから順に表示される', () => {

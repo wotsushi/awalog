@@ -16,7 +16,7 @@ export type Result = {
 };
 export type ResultChar = 'W' | 'L' | 'D';
 
-const winner = (duel: Duel) => {
+export const duelWinner = (duel: Duel) => {
   if (duel[1].lo && duel[2].lo) {
     return 0;
   }
@@ -40,14 +40,14 @@ export const findWinner = (result: Result) => {
     if (duels.length === 0) {
       return null;
     }
-    return winner(duels[0]);
+    return duelWinner(duels[0]);
   }
   // Matchの場合
   if (duels.length <= 1) {
     return null;
   }
   const s = result.duels.reduce((res, duel) => {
-    const w = winner(duel);
+    const w = duelWinner(duel);
     if (w === 1) {
       return res + 1;
     }
@@ -70,7 +70,7 @@ export const findWinner = (result: Result) => {
 
 export const toResultChars = (result: Result, i: 1 | 2): ResultChar[] =>
   result.duels.map((duel) => {
-    const w = winner(duel);
+    const w = duelWinner(duel);
     if (w === 0) {
       return 'D';
     }
