@@ -7,17 +7,14 @@ import { Deck } from 'lib/result';
 
 import { summaryDeck } from './Dashboard';
 
-const pageSize = 15;
-
 const Root = styled.div`
   position: sticky;
   top: 56px;
-  width: 324px;
-  height: 712px;
+  width: 170px;
 `;
 
 const StyledNav = styled(Nav)`
-  height: 640px;
+  height: ${(props) => 40 * (props.pagesize + 1)}px;
 `;
 
 const StyledPagination = styled(Pagination)`
@@ -33,10 +30,13 @@ type Props = {
 
 const Sidebar = ({ decks, subject, setSubject }: Props) => {
   const [page, setPage] = useState(0);
+  const pageSize = Math.floor((window.innerHeight - 140) / 40);
+
   return (
     <Root data-testid="sidebar">
       <StyledNav
         className="flex-column"
+        pagesize={pageSize}
         variant="pills"
         onSelect={(eventKey: string) => {
           if (eventKey) {

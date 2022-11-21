@@ -73,8 +73,6 @@ const WLDChart = ({ decks, results, subjectID }: Props) => {
   );
   return (
     <Bar
-      width={700}
-      height={350}
       options={{
         scales: {
           x: {

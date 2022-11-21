@@ -28,8 +28,9 @@ ChartJS.register(
 );
 
 const Root = styled.div`
-  width: 700px;
+  flex: 1;
   padding-top: 5px;
+  padding-left: 5px;
 `;
 
 const ChartSelector = styled(Form.Select)`
