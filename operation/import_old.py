@@ -2,7 +2,6 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-import click
 import firebase_admin
 from firebase_admin import credentials, firestore
 
@@ -13,12 +12,9 @@ app = firebase_admin.initialize_app(cred)
 client = firestore.client(app)
 
 
-@click.command()
-@click.argument("env")
-def import_doc(env: str):
-    path = env / Path("1103")
+def import_doc(path: Path):
     ref = client.document(str(path))
-    data = ref.get().to_dict()
+    data = ref.get().to_dict()["data"]
     dir = "backup" / path
     dir.mkdir(parents=True, exist_ok=True)
     name = datetime.now().strftime("%Y%m%d%H%M") + ".json"
@@ -27,6 +23,7 @@ def import_doc(env: str):
 
 
 # 実行例
-# $ poetry run python operation/import.py dev
+# $ poetry run python operation/import.py
 if __name__ == "__main__":
-    import_doc()
+    import_doc(Path("1103/decks"))
+    import_doc(Path("1103/results"))

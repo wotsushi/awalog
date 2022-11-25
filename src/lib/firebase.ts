@@ -30,8 +30,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
-const decksRef = doc(db, '1103', 'decks');
-const resultsRef = doc(db, '1103', 'results');
+const collection = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
+const ref = doc(db, collection, '1103');
 
 const auth = getAuth(app);
 
@@ -39,9 +39,9 @@ export const useDecks = () => {
   const [decks, setDecks] = useState<Deck[]>([]);
   useEffect(() => {
     const accessDB = async () => {
-      const doc = await getDoc(decksRef);
-      const decksData = doc.data() as { data: Deck[] };
-      setDecks(decksData['data']);
+      const doc = await getDoc(ref);
+      const decksData = doc.data() as { decks: Deck[] };
+      setDecks(decksData['decks']);
     };
     accessDB();
   }, []);
@@ -53,9 +53,9 @@ export const useResults = () => {
   const [results, setResults] = useState<Result[]>([]);
   useEffect(() => {
     const accessDB = async () => {
-      const resultsDoc = await getDoc(resultsRef);
-      const resultsData = resultsDoc.data() as { data: Result[] };
-      setResults(resultsData['data']);
+      const resultsDoc = await getDoc(ref);
+      const resultsData = resultsDoc.data() as { results: Result[] };
+      setResults(resultsData['results']);
     };
     accessDB();
   }, []);
@@ -67,8 +67,8 @@ export const useSaveResults = (thenFn?: () => void, catchFn?: () => void) =>
   useCallback(
     (result: Result) => {
       const accessDB = async () => {
-        await updateDoc(resultsRef, {
-          data: arrayUnion(result),
+        await updateDoc(ref, {
+          results: arrayUnion(result),
         })
           .then(thenFn)
           .catch(catchFn);
