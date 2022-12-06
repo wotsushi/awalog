@@ -1,8 +1,8 @@
-import { Bar } from 'react-chartjs-2';
-
 import { Deck, findWinner, Result } from 'lib/result';
+import { Media } from 'lib/useMedia';
 import { summaryDeck } from 'Stats/Dashboard';
 
+import PaginationBar from './PaginationBar';
 import { DefaultObject } from './util';
 
 const summaryChartData = (results: Result[]) => {
@@ -72,9 +72,13 @@ const WPChart = ({ results, decks, subjectID }: Props) => {
     (id) => decks.find((deck) => String(deck.id) === id)?.name
   );
   return (
-    <Bar
-      width={700}
-      height={350}
+    <PaginationBar
+      pageSizeByMedia={{
+        [Media.Mobile]: 15,
+        [Media.Tablet]: 30,
+        [Media.PC]: 40,
+      }}
+      decks={decks}
       options={{
         scales: {
           y: {
@@ -100,6 +104,7 @@ const WPChart = ({ results, decks, subjectID }: Props) => {
           },
         ],
       }}
+      subjectID={subjectID}
     />
   );
 };

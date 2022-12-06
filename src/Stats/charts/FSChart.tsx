@@ -1,16 +1,11 @@
-import { useState } from 'react';
-import { Pagination } from 'react-bootstrap';
-import { Bar } from 'react-chartjs-2';
-import styled from 'styled-components';
-
 import { Deck, duelWinner, Result } from 'lib/result';
+import { Media } from 'lib/useMedia';
 import { summaryDeck } from 'Stats/Dashboard';
 
+import PaginationBar from './PaginationBar';
 import { DefaultObject } from './util';
 
-const pageSize = 15;
-
-const summaryChartData = (results: Result[], page: number) => {
+const summaryChartData = (results: Result[]) => {
   const deckIDs = new Set<number>();
   const accFirst = new DefaultObject({ win: 0, lose: 0, draw: 0 });
   const accSecond = new DefaultObject({ win: 0, lose: 0, draw: 0 });
@@ -50,7 +45,7 @@ const summaryChartData = (results: Result[], page: number) => {
   };
 };
 
-const chartData = (results: Result[], subjectID: number, page: number) => {
+const chartData = (results: Result[], subjectID: number) => {
   const deckIDs = new Set<number>();
   const accFirst = new DefaultObject({ win: 0, lose: 0, draw: 0 });
   const accSecond = new DefaultObject({ win: 0, lose: 0, draw: 0 });
@@ -121,11 +116,6 @@ const chartData = (results: Result[], subjectID: number, page: number) => {
   };
 };
 
-const ChartPagination = styled(Pagination)`
-  justify-content: center;
-  margin-top: 10px;
-`;
-
 type Props = {
   decks: Deck[];
   results: Result[];
@@ -133,75 +123,62 @@ type Props = {
 };
 
 const FSChart = ({ decks, results, subjectID }: Props) => {
-  const [pages, setPages] = useState([...Array(decks.length + 1)].map(() => 0));
-  const page = pages[subjectID];
   const { deckIDs, first, second } =
     subjectID === summaryDeck.id
-      ? summaryChartData(results, page)
-      : chartData(results, subjectID, page);
+      ? summaryChartData(results)
+      : chartData(results, subjectID);
   const labels = deckIDs.map(
     (id) => decks.find((deck) => deck.id === id)?.name
   );
-  const slice = <T,>(a: T[]) => a.slice(pageSize * page, pageSize * (page + 1));
   return (
-    <>
-      <Bar
-        width={700}
-        height={350}
-        options={{
-          scales: {
-            x: {
-              stacked: true,
-            },
-            y: {
-              stacked: true,
-            },
+    <PaginationBar
+      pageSizeByMedia={{
+        [Media.Mobile]: 8,
+        [Media.Tablet]: 15,
+        [Media.PC]: 20,
+      }}
+      decks={decks}
+      options={{
+        scales: {
+          x: {
+            stacked: true,
           },
-        }}
-        data={{
-          labels: slice(labels),
-          datasets: [
-            {
-              label: '先勝',
-              data: slice(first.win),
-              backgroundColor: 'rgba(53, 162, 235, 0.5)',
-              stack: 'first',
-            },
-            {
-              label: '先負',
-              data: slice(first.lose),
-              backgroundColor: 'rgb(255, 99, 132, 0.5)',
-              stack: 'first',
-            },
-            {
-              label: '後勝',
-              data: slice(second.win),
-              backgroundColor: 'rgba(75, 192, 192, 0.5)',
-              stack: 'second',
-            },
-            {
-              label: '後負',
-              data: slice(second.lose),
-              backgroundColor: 'rgba(255, 75, 0, 0.5)',
-              stack: 'second',
-            },
-          ],
-        }}
-      />
-      <ChartPagination>
-        {[...Array(Math.ceil(deckIDs.length / pageSize))].map((_, i) => (
-          <Pagination.Item
-            key={i}
-            active={i === page}
-            onClick={() =>
-              setPages(pages.map((page, j) => (j === subjectID ? i : page)))
-            }
-          >
-            {i + 1}
-          </Pagination.Item>
-        ))}
-      </ChartPagination>
-    </>
+          y: {
+            stacked: true,
+          },
+        },
+      }}
+      data={{
+        labels,
+        datasets: [
+          {
+            label: '先勝',
+            data: first.win,
+            backgroundColor: 'rgba(53, 162, 235, 0.5)',
+            stack: 'first',
+          },
+          {
+            label: '先負',
+            data: first.lose,
+            backgroundColor: 'rgb(255, 99, 132, 0.5)',
+            stack: 'first',
+          },
+          {
+            label: '後勝',
+            data: second.win,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            stack: 'second',
+          },
+          {
+            label: '後負',
+            data: second.lose,
+            backgroundColor: 'rgba(255, 75, 0, 0.5)',
+            stack: 'second',
+          },
+        ],
+      }}
+      subjectID={subjectID}
+    />
   );
 };
 

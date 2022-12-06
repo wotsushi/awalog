@@ -18,6 +18,9 @@ const Stats = () => {
   const results = useResults();
   const user = useUser();
   const [subject, setSubject] = useState<Deck>(summaryDeck);
+  if (decks.length === 0) {
+    return null;
+  }
 
   return (
     <>

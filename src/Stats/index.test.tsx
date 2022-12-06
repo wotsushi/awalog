@@ -7,6 +7,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { useDecks, useResults, useUser } from 'lib/firebase';
 import { Deck, Result } from 'lib/result';
+import { Media, MediaValue, useMedia } from 'lib/useMedia';
 
 import OriginalStats from '.';
 
@@ -14,6 +15,10 @@ jest.mock('lib/firebase');
 const useDecksMock = useDecks as jest.MockedFunction<typeof useDecks>;
 const useResultsMock = useResults as jest.MockedFunction<typeof useResults>;
 const useUserMock = useUser as jest.MockedFunction<typeof useUser>;
+
+jest.mock('lib/useMedia');
+const useMediaMock = jest.mocked(useMedia);
+
 jest.mock('react-chartjs-2', () => ({
   // グラフの代わりにグラフ描画に使われる引数を表示するmock
   Bar: (props: { data: React.ComponentProps<typeof Bar>['data'] }) => {
@@ -37,6 +42,7 @@ type Props = {
   decks?: Deck[];
   results?: Result[];
   user?: User;
+  media?: MediaValue;
 };
 
 const Stats = ({
@@ -46,10 +52,12 @@ const Stats = ({
   ],
   results = [],
   user = { emailVerified: true } as User,
+  media = Media.Tablet,
 }: Props) => {
   useDecksMock.mockReturnValue(decks);
   useResultsMock.mockReturnValue(results);
   useUserMock.mockReturnValue(user);
+  useMediaMock.mockReturnValue(media);
   return (
     <MemoryRouter>
       <OriginalStats />
@@ -60,13 +68,6 @@ const Stats = ({
 const user = userEvent.setup();
 
 describe('サイドメニュー', () => {
-  it('デッキリストが空でも項目サマリーは表示される', async () => {
-    render(<Stats decks={[]} />);
-
-    expect(
-      within(screen.getByTestId('sidebar')).getByText('サマリー')
-    ).toBeInTheDocument();
-  });
   it('デッキリストが[旋風BF, 代行天使]のときサイドメニューには[サマリー、旋風BF、代行天使]の順で項目が表示される', async () => {
     render(
       <Stats
@@ -124,10 +125,7 @@ describe('サイドメニュー', () => {
     );
 
     const sidebar = within(screen.getByTestId('sidebar'));
-    const pages = sidebar.getAllByRole('listitem');
-    expect(pages).toHaveLength(2);
-    expect(pages[0]).toHaveClass('active');
-    expect(pages[1]).not.toHaveClass('active');
+    expect(sidebar.getByText('1 / 2')).toBeInTheDocument();
     expect(sidebar.getByText('サマリー')).toBeInTheDocument();
     [...Array(15)].forEach((_, i) => {
       expect(sidebar.getByText(`デッキ${i + 1}`)).toBeInTheDocument();
@@ -145,12 +143,9 @@ describe('サイドメニュー', () => {
     );
     const sidebar = within(screen.getByTestId('sidebar'));
 
-    await userEvent.click(sidebar.getByText('2'));
+    await userEvent.click(sidebar.getByText('Next'));
 
-    const pages = sidebar.getAllByRole('listitem');
-    expect(pages).toHaveLength(2);
-    expect(pages[0]).not.toHaveClass('active');
-    expect(pages[1]).toHaveClass('active');
+    expect(sidebar.getByText('2 / 2')).toBeInTheDocument();
     expect(sidebar.getByText('サマリー')).toBeInTheDocument();
     [...Array(15)].forEach((_, i) => {
       expect(sidebar.queryByText(`デッキ${i + 1}`)).not.toBeInTheDocument();
