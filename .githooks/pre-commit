@@ -1,0 +1,4 @@
+set -eu
+yarn lint:ts
+yarn lint:css
+yarn format:check
