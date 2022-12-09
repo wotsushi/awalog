@@ -114,13 +114,14 @@ describe('サイドメニュー', () => {
     expect(screen.getByText('サマリー')).not.toHaveClass('active');
     expect(screen.getByText('旋風BF')).toHaveClass('active');
   });
-  it('デッキが16個ある場合、ページ1にはサマリーと15個のデッキが表示される', async () => {
+  it('タブレットでデッキが16個ある場合、ページ1にはサマリーと15個のデッキが表示される', async () => {
     render(
       <Stats
         decks={[...Array(16)].map((_, i) => ({
           id: i + 1,
           name: `デッキ${i + 1}`,
         }))}
+        media={Media.Tablet}
       />
     );
 
@@ -132,13 +133,14 @@ describe('サイドメニュー', () => {
     });
     expect(sidebar.queryByText('デッキ16')).not.toBeInTheDocument();
   });
-  it('デッキが16個ある場合、ページ2には16個目のデッキ個表示される', async () => {
+  it('タブレットでデッキが16個ある場合、ページ2には16個目のデッキ個表示される', async () => {
     render(
       <Stats
         decks={[...Array(16)].map((_, i) => ({
           id: i + 1,
           name: `デッキ${i + 1}`,
         }))}
+        media={Media.Tablet}
       />
     );
     const sidebar = within(screen.getByTestId('sidebar'));

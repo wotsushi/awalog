@@ -5,6 +5,26 @@ import { summaryDeck } from 'Stats/Dashboard';
 import PaginationBar from './PaginationBar';
 import { DefaultObject } from './util';
 
+const sortChartData = (
+  acc: DefaultObject<{ win: number; lose: number; draw: number }>
+) => {
+  const sorted = Object.entries(acc.data)
+    .map(([deckID, { win, lose, draw }]) => ({
+      wp: (100 * win) / (win + lose + draw),
+      deckID: Number(deckID),
+    }))
+    .sort((a, b) => {
+      if (a.wp !== b.wp) {
+        return b.wp - a.wp;
+      }
+      return a.deckID - b.deckID;
+    });
+  return {
+    deckIDs: sorted.map(({ deckID }) => deckID),
+    data: sorted.map(({ wp }) => wp),
+  };
+};
+
 const summaryChartData = (results: Result[]) => {
   const acc = new DefaultObject({ win: 0, lose: 0, draw: 0 });
   results
@@ -20,12 +40,7 @@ const summaryChartData = (results: Result[]) => {
         acc.get(decks[i === 1 ? 2 : 1]).lose++;
       }
     });
-  return {
-    deckIDs: Object.keys(acc.data),
-    data: Object.values(acc.data).map(
-      ({ win, lose, draw }) => (100 * win) / (win + lose + draw)
-    ),
-  };
+  return sortChartData(acc);
 };
 
 const chartData = (results: Result[], subjectID: number) => {
@@ -49,12 +64,7 @@ const chartData = (results: Result[], subjectID: number) => {
         acc.get(decks[opponent]).lose++;
       }
     });
-  return {
-    deckIDs: Object.keys(acc.data),
-    data: Object.values(acc.data).map(
-      ({ win, lose, draw }) => (100 * win) / (win + lose + draw)
-    ),
-  };
+  return sortChartData(acc);
 };
 
 type Props = {
@@ -69,7 +79,7 @@ const WPChart = ({ results, decks, subjectID }: Props) => {
       ? summaryChartData(results)
       : chartData(results, subjectID);
   const labels = deckIDs.map(
-    (id) => decks.find((deck) => String(deck.id) === id)?.name
+    (id) => decks.find((deck) => deck.id === id)?.name
   );
   return (
     <PaginationBar
