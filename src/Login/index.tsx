@@ -22,7 +22,7 @@ const Login = () => {
   const login = useLogin(() => setFailedLogin(true));
   return (
     <>
-      <AWANav disabledStats={false} user={user} />
+      <AWANav disabledNav={false} user={user} />
       {failedLogin && (
         <Alert variant="danger">
           メールアドレスまたはパスワードが正しくありません

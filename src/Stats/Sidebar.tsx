@@ -15,7 +15,7 @@ const Root = styled.div`
 `;
 
 const StyledNav = styled(Nav)`
-  height: ${(props) => 40 * (props.pagesize + 1)}px;
+  height: ${(props) => 40 * (props.$pageSize + 1)}px;
 `;
 
 const StyledPagination = styled(Pagination)`
@@ -52,7 +52,7 @@ const Sidebar = ({ decks, subject, setSubject }: Props) => {
     <Root data-testid="sidebar">
       <StyledNav
         className="flex-column"
-        pagesize={pageSize}
+        $pageSize={pageSize}
         variant="pills"
         onSelect={(eventKey: string) => {
           if (eventKey) {

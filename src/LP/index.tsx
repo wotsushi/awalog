@@ -54,7 +54,7 @@ const Content = ({ decks }: Props) => {
 
   return (
     <>
-      <AWANav disabledStats={isPlaying} user={user} />
+      <AWANav disabledNav={isPlaying} user={user} />
       <Container>
         <Toolbar
           showResetModal={showResetModal}

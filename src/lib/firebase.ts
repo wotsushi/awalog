@@ -7,10 +7,13 @@ import {
   User,
 } from 'firebase/auth';
 import {
+  arrayRemove,
   arrayUnion,
   doc,
   getDoc,
   getFirestore,
+  increment,
+  onSnapshot,
   updateDoc,
 } from 'firebase/firestore';
 import { useCallback, useEffect, useState } from 'react';
@@ -38,16 +41,77 @@ const auth = getAuth(app);
 export const useDecks = () => {
   const [decks, setDecks] = useState<Deck[]>([]);
   useEffect(() => {
-    const accessDB = async () => {
-      const doc = await getDoc(ref);
-      const decksData = doc.data() as { decks: Deck[] };
-      setDecks(decksData['decks']);
-    };
-    accessDB();
+    onSnapshot(ref, (doc) => {
+      const accessDB = async () => {
+        const doc = await getDoc(ref);
+        const decksData = doc.data() as { decks: Deck[] };
+        setDecks(decksData['decks']);
+      };
+      accessDB();
+    });
   }, []);
 
   return decks;
 };
+
+export const useAddDeck = () =>
+  useCallback((name: string) => {
+    const accessDB = async () => {
+      const doc = await getDoc(ref);
+      const nextDeckIDData = doc.data() as { nextDeckID: number };
+      await updateDoc(ref, {
+        decks: arrayUnion({ id: nextDeckIDData['nextDeckID'], name }),
+        nextDeckID: increment(1),
+      });
+    };
+    accessDB();
+  }, []);
+
+export const useUpdateDeck = () =>
+  useCallback((prev: Deck, deckName: string) => {
+    const accessDB = async () => {
+      const doc = await getDoc(ref);
+      const decksData = doc.data() as { decks: Deck[] };
+      const prevDecks = decksData.decks;
+      const nextDecks = prevDecks.map((deck) =>
+        deck.id === prev.id
+          ? {
+              id: deck.id,
+              name: deckName,
+            }
+          : deck
+      );
+      await updateDoc(ref, {
+        decks: nextDecks,
+      });
+    };
+    accessDB();
+  }, []);
+
+export const useUpdateDecks = () => ({
+  addDeck: useCallback((name: string) => {
+    const accessDB = async () => {
+      const doc = await getDoc(ref);
+      const nextDeckIDData = doc.data() as { nextDeckID: number };
+      await updateDoc(ref, {
+        decks: arrayUnion({ id: nextDeckIDData['nextDeckID'], name }),
+        nextDeckID: increment(1),
+      });
+    };
+    accessDB();
+  }, []),
+  updateDeck: useCallback((prev: Deck, next: Deck) => {
+    const accessDB = async () => {
+      await updateDoc(ref, {
+        decks: arrayRemove(prev),
+      });
+      await updateDoc(ref, {
+        decks: arrayUnion(next),
+      });
+    };
+    accessDB();
+  }, []),
+});
 
 export const useResults = () => {
   const [results, setResults] = useState<Result[]>([]);
